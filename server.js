@@ -8,7 +8,7 @@ const multer = require('multer');
 const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
 const PDFDocument = require('pdfkit');
 
 const app = express();
@@ -20,8 +20,7 @@ const CONFIG = {
     // Email
     email: {
         destinataire: 'kadima.gestion@gmail.com',
-        user: process.env.GMAIL_USER || '',
-        pass: process.env.GMAIL_PASS || ''
+        resendApiKey: process.env.RESEND_API_KEY || ''
     }
 };
 
@@ -306,28 +305,19 @@ function getDateIsrael() {
     });
 }
 
-// ===== Configuration Email =====
-let transporter = null;
-if (CONFIG.email.user && CONFIG.email.pass) {
-    transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-            user: CONFIG.email.user,
-            pass: CONFIG.email.pass
-        },
-        connectionTimeout: 30000, // 30 secondes
-        greetingTimeout: 30000,
-        socketTimeout: 60000 // 60 secondes pour l'envoi
-    });
-    console.log('📧 Envoi d\'emails activé');
+// ===== Configuration Email Resend =====
+let resend = null;
+if (CONFIG.email.resendApiKey) {
+    resend = new Resend(CONFIG.email.resendApiKey);
+    console.log('📧 Envoi d\'emails activé (Resend)');
 } else {
-    console.log('⚠️  Envoi d\'emails désactivé (variables GMAIL_USER et GMAIL_PASS non configurées)');
+    console.log('⚠️  Envoi d\'emails désactivé (variable RESEND_API_KEY non configurée)');
 }
 
-// Fonction d'envoi d'email avec PDF
+// Fonction d'envoi d'email avec PDF (Resend)
 async function envoyerEmailInscription(data, niu, pdfPath) {
-    if (!transporter) {
-        console.log('📧 Email non envoyé (transporteur non configuré)');
+    if (!resend) {
+        console.log('📧 Email non envoyé (Resend non configuré)');
         return false;
     }
 
@@ -349,29 +339,39 @@ Service gestion – Programme Kadima
 📧 kadima.gestion@gmail.com
 `;
 
-    const mailOptions = {
-        from: CONFIG.email.user,
-        to: data.email, // Envoi à l'étudiant uniquement
-        bcc: CONFIG.email.destinataire, // Admin en copie cachée
-        subject: `[${niu}] Formulaire pour ${data.nom} ${data.prenom} transmis avec succès`,
-        text: emailContent,
-        attachments: []
-    };
-
-    // Ajouter le PDF en pièce jointe si disponible
-    if (pdfPath && fs.existsSync(pdfPath)) {
-        mailOptions.attachments.push({
-            filename: `Inscription_${niu}.pdf`,
-            path: pdfPath
-        });
-    }
-
     try {
-        await transporter.sendMail(mailOptions);
-        console.log(`📧 Email envoyé à ${data.email} (copie cachée: ${CONFIG.email.destinataire})`);
+        // Lire le PDF en base64 si disponible
+        let attachments = [];
+        if (pdfPath && fs.existsSync(pdfPath)) {
+            const pdfContent = fs.readFileSync(pdfPath);
+            attachments.push({
+                filename: `Inscription_${niu}.pdf`,
+                content: pdfContent
+            });
+        }
+
+        // Envoyer à l'étudiant
+        await resend.emails.send({
+            from: 'Kadima <onboarding@resend.dev>',
+            to: data.email,
+            subject: `[‎${niu}] Formulaire pour ${data.nom} ${data.prenom} transmis avec succès`,
+            text: emailContent,
+            attachments: attachments
+        });
+
+        // Envoyer copie à l'admin
+        await resend.emails.send({
+            from: 'Kadima <onboarding@resend.dev>',
+            to: CONFIG.email.destinataire,
+            subject: `[ADMIN] [‎${niu}] Nouvelle inscription: ${data.nom} ${data.prenom}`,
+            text: `Nouvelle inscription reçue.\n\nNIU: ${niu}\nNom: ${data.nom} ${data.prenom}\nEmail: ${data.email}\n\n` + emailContent,
+            attachments: attachments
+        });
+
+        console.log(`📧 Emails envoyés à ${data.email} et ${CONFIG.email.destinataire}`);
         return true;
     } catch (error) {
-        console.error('❌ Erreur envoi email:', error.message);
+        console.error('❌ Erreur envoi email Resend:', error.message);
         return false;
     }
 }
