@@ -4,19 +4,23 @@
  * Gestion des inscriptions et bourses - Programme Kadima
  * ═══════════════════════════════════════════════════════════════════════════
  * 
- * @version     1.3.0
- * @date        06 janvier 2026 16:28
+ * @version     1.4.0
+ * @date        06 janvier 2026 17:26
  * @author      Maxi (Assistant IA) & Sassi
  * 
  * ───────────────────────────────────────────────────────────────────────────
  * HISTORIQUE DES MODIFICATIONS
  * ───────────────────────────────────────────────────────────────────────────
  * 
+ * v1.4.0 - 06 janvier 2026 17:26
+ *   - Migration vers PostgreSQL Render (abandon MariaDB IONOS)
+ *   - Mise à jour database.js pour pg
+ *   - Bourses: CROUS, MASSA, TEVMI, COBY
+ * 
  * v1.3.0 - 06 janvier 2026 16:28
- *   - Intégration base de données MariaDB IONOS
+ *   - Intégration base de données (tentative MariaDB IONOS)
  *   - Création module database.js (connexion, tables, données par défaut)
  *   - Tables: inscriptions, statuts, bourses, devises, modalités, plateformes
- *   - Ajout dépendance mysql2
  * 
  * v1.2.0 - 06 janvier 2026 16:07
  *   - Migration de Gmail vers Resend pour l'envoi d'emails
@@ -632,7 +636,7 @@ async function startServer() {
         console.log(`   📁 Uploads: ${uploadsDir}`);
         console.log(`   📅 Session: ${CONFIG.sessionAnnee}-${CONFIG.sessionAnnee + 1}`);
         if (dbConnected) {
-            console.log('   🗄️  Base de données: MariaDB IONOS connectée');
+            console.log('   🗄️  Base de données: PostgreSQL Render connectée');
         } else {
             console.log('   ⚠️  Base de données: Mode fichiers JSON (fallback)');
         }
