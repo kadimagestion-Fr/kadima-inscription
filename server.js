@@ -1,6 +1,37 @@
 /**
+ * ═══════════════════════════════════════════════════════════════════════════
  * KADIMA - Serveur Backend
- * Gestion des inscriptions et bourses
+ * Gestion des inscriptions et bourses - Programme Kadima
+ * ═══════════════════════════════════════════════════════════════════════════
+ * 
+ * @version     1.2.0
+ * @date        06 janvier 2026 16:07
+ * @author      Maxi (Assistant IA) & Sassi
+ * 
+ * ───────────────────────────────────────────────────────────────────────────
+ * HISTORIQUE DES MODIFICATIONS
+ * ───────────────────────────────────────────────────────────────────────────
+ * 
+ * v1.2.0 - 06 janvier 2026 16:07
+ *   - Migration de Gmail vers Resend pour l'envoi d'emails
+ *   - Ajout fonction getDateIsrael() pour fuseau horaire Israël
+ *   - Solution temporaire : envoi email uniquement à l'admin
+ *   - Augmentation des timeouts de connexion
+ * 
+ * v1.1.0 - 05 janvier 2026 14:30
+ *   - Ajout logo Kadima dans le PDF
+ *   - Remplacement Père/Mère par Représentants légaux 1 et 2
+ *   - Option étudiant autonome
+ *   - CAF rendu obligatoire avec info-bulle
+ *   - Données techniques _meta dans inscription.json
+ *   - Suppression sauts de page inutiles dans le PDF
+ * 
+ * v1.0.0 - 04 janvier 2026 10:00
+ *   - Version initiale
+ *   - Formulaire multi-étapes
+ *   - Génération PDF, NIU, envoi email
+ * 
+ * ═══════════════════════════════════════════════════════════════════════════
  */
 
 const express = require('express');
