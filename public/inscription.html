@@ -162,6 +162,7 @@
                     <div class="step-indicator" data-step="5"><span>5</span></div>
                     <div class="step-indicator" data-step="6"><span>6</span></div>
                     <div class="step-indicator" data-step="7"><span>7</span></div>
+                    <div class="step-indicator" data-step="8"><span>8</span></div>
                 </div>
             </div>
 
@@ -319,9 +320,10 @@
                                 <span class="error-message">Ce champ est obligatoire</span>
                             </div>
                             <div class="form-group">
-                                <label for="numPasseport">Numéro de passeport</label>
+                                <label for="numPasseport">Numéro de passeport <span class="required">*</span></label>
                                 <input type="text" id="numPasseport" name="numPasseport" class="form-control"
-                                    placeholder="XX123456">
+                                    placeholder="XX123456" required>
+                                <span class="error-message">Ce champ est obligatoire</span>
                             </div>
                         </div>
 
@@ -620,19 +622,6 @@
                             </div>
                         </div>
 
-                        <h4 style="margin: var(--spacing-6) 0 var(--spacing-4); color: var(--color-gray-600);">Fratrie
-                        </h4>
-                        <div class="form-group">
-                            <label for="nbFratrie">Nombre de frères et sœurs</label>
-                            <input type="number" id="nbFratrie" name="nbFratrie" class="form-control" min="0" max="20"
-                                value="0">
-                        </div>
-
-                        <div id="fratrieContainer"></div>
-                        <button type="button" class="add-sibling-btn" id="addSiblingBtn" style="display: none;">
-                            + Ajouter un frère/une sœur
-                        </button>
-
                         <h4 style="margin: var(--spacing-6) 0 var(--spacing-4); color: var(--color-gray-600);">Contact
                             en Israël</h4>
                         <div class="form-group">
@@ -642,20 +631,196 @@
                         </div>
                     </div>
 
-                    <!-- SECTION 3: Parcours -->
+                    <!-- SECTION 3: Situation financière -->
                     <div class="form-section" data-section="3">
+                        <h3 class="section-title">
+                            <span class="icon">💶</span>
+                            Situation financière
+                        </h3>
+
+                        <div class="info-box">
+                            <p><strong>Pourquoi ces informations ?</strong> Ces données nous permettent d'évaluer votre
+                                situation et de vous proposer les aides adaptées. Elles restent strictement
+                                confidentielles.</p>
+                        </div>
+
+                        <!-- Foyer fiscal -->
+                        <h4 style="margin: var(--spacing-4) 0 var(--spacing-3); color: var(--color-gray-600);">
+                            📊 Foyer fiscal (des parents/représentants légaux)
+                        </h4>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="revenusMensuels">Revenus mensuels du foyer</label>
+                                <div style="display: flex; gap: var(--spacing-2);">
+                                    <input type="number" id="revenusMensuels" name="revenusMensuels"
+                                        class="form-control" placeholder="0" min="0" step="100" style="flex: 1;">
+                                    <select id="deviseRevenus" name="deviseRevenus" class="form-control"
+                                        style="width: 100px;">
+                                        <option value="EUR">€ EUR</option>
+                                        <option value="USD">$ USD</option>
+                                        <option value="CAD">$ CAD</option>
+                                        <option value="ILS">₪ ILS</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="allocationsCaf">Allocations CAF/APL mensuelles</label>
+                                <input type="number" id="allocationsCaf" name="allocationsCaf" class="form-control"
+                                    placeholder="0" min="0" step="10">
+                                <span style="font-size: 0.85em; color: var(--color-gray-500);">En euros</span>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="loyerMensuel">Loyer ou échéances de prêt immobilier</label>
+                                <input type="number" id="loyerMensuel" name="loyerMensuel" class="form-control"
+                                    placeholder="0" min="0" step="50">
+                                <span style="font-size: 0.85em; color: var(--color-gray-500);">Par mois, en euros</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="nbPersonnesFoyer">Nombre de personnes au foyer</label>
+                                <input type="number" id="nbPersonnesFoyer" name="nbPersonnesFoyer" class="form-control"
+                                    min="1" max="20" value="1">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="nbEnfantsCharge">Nombre d'enfants à charge</label>
+                                <input type="number" id="nbEnfantsCharge" name="nbEnfantsCharge" class="form-control"
+                                    min="0" max="15" value="0">
+                            </div>
+                            <div class="form-group">
+                                <label for="quotientFamilial">Quotient familial CAF <span class="tooltip-icon"
+                                        title="Le quotient familial figure sur votre attestation CAF">ℹ️</span></label>
+                                <input type="number" id="quotientFamilial" name="quotientFamilial" class="form-control"
+                                    placeholder="Ex: 850" min="0">
+                            </div>
+                        </div>
+
+                        <!-- Situation de l'étudiant -->
+                        <h4 style="margin: var(--spacing-6) 0 var(--spacing-3); color: var(--color-gray-600);">
+                            🎓 Situation financière de l'étudiant
+                        </h4>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="coutScolaritePrecedente">Coût mensuel de la dernière scolarité</label>
+                                <div style="display: flex; gap: var(--spacing-2);">
+                                    <input type="number" id="coutScolaritePrecedente" name="coutScolaritePrecedente"
+                                        class="form-control" placeholder="0" min="0" style="flex: 1;">
+                                    <select id="deviseScolarite" name="deviseScolarite" class="form-control"
+                                        style="width: 100px;">
+                                        <option value="EUR">€ EUR</option>
+                                        <option value="USD">$ USD</option>
+                                        <option value="CAD">$ CAD</option>
+                                        <option value="ILS">₪ ILS</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="participationPossible">Participation mensuelle possible pour Kadima</label>
+                                <div style="display: flex; gap: var(--spacing-2);">
+                                    <input type="number" id="participationPossible" name="participationPossible"
+                                        class="form-control" placeholder="0" min="0" style="flex: 1;">
+                                    <select id="deviseParticipation" name="deviseParticipation" class="form-control"
+                                        style="width: 100px;">
+                                        <option value="EUR">€ EUR</option>
+                                        <option value="USD">$ USD</option>
+                                        <option value="CAD">$ CAD</option>
+                                        <option value="ILS">₪ ILS</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Bourse CROUS -->
+                        <div class="form-group">
+                            <label>Bénéficiez-vous de la bourse CROUS ?</label>
+                            <div class="radio-group">
+                                <div class="radio-item">
+                                    <input type="radio" id="crousOui" name="bourseCrous" value="oui">
+                                    <label for="crousOui">Oui</label>
+                                </div>
+                                <div class="radio-item">
+                                    <input type="radio" id="crousNon" name="bourseCrous" value="non" checked>
+                                    <label for="crousNon">Non</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="conditional-field" id="crousFields">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="crousEchelon">Échelon CROUS</label>
+                                    <select id="crousEchelon" name="crousEchelon" class="form-control">
+                                        <option value="">Sélectionnez...</option>
+                                        <option value="0bis">Échelon 0 bis</option>
+                                        <option value="1">Échelon 1</option>
+                                        <option value="2">Échelon 2</option>
+                                        <option value="3">Échelon 3</option>
+                                        <option value="4">Échelon 4</option>
+                                        <option value="5">Échelon 5</option>
+                                        <option value="6">Échelon 6</option>
+                                        <option value="7">Échelon 7</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="crousMontant">Montant mensuel perçu (€)</label>
+                                    <input type="number" id="crousMontant" name="crousMontant" class="form-control"
+                                        placeholder="Ex: 450" min="0">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Autres bourses -->
+                        <div class="form-group">
+                            <label for="autresBourses">Autres aides ou bourses perçues</label>
+                            <textarea id="autresBourses" name="autresBourses" class="form-control"
+                                placeholder="Précisez le nom et le montant des autres aides (ex: bourse régionale, aide au mérite...)"></textarea>
+                        </div>
+
+                        <!-- Travail de l'étudiant -->
+                        <div class="form-group">
+                            <label>L'étudiant travaille-t-il actuellement ?</label>
+                            <div class="radio-group">
+                                <div class="radio-item">
+                                    <input type="radio" id="travailOui" name="etudiantTravaille" value="oui">
+                                    <label for="travailOui">Oui</label>
+                                </div>
+                                <div class="radio-item">
+                                    <input type="radio" id="travailNon" name="etudiantTravaille" value="non" checked>
+                                    <label for="travailNon">Non</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="conditional-field" id="travailFields">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="travailType">Type d'emploi</label>
+                                    <input type="text" id="travailType" name="travailType" class="form-control"
+                                        placeholder="Ex: Job étudiant, CDI temps partiel...">
+                                </div>
+                                <div class="form-group">
+                                    <label for="travailRevenu">Revenu mensuel net (€)</label>
+                                    <input type="number" id="travailRevenu" name="travailRevenu" class="form-control"
+                                        placeholder="0" min="0">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SECTION 4: Parcours -->
+                    <div class="form-section" data-section="4">
                         <h3 class="section-title">
                             <span class="icon">🎓</span>
                             Parcours scolaire et activités
                         </h3>
 
                         <h4 style="margin-bottom: var(--spacing-4); color: var(--color-gray-600);">Études</h4>
-                        <div class="form-group">
-                            <label for="etudesSecondaires">Études secondaires</label>
-                            <input type="text" id="etudesSecondaires" name="etudesSecondaires" class="form-control"
-                                placeholder="Lycée, ville">
-                        </div>
-
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="baccalaureat">Baccalauréat <span class="required">*</span></label>
@@ -678,7 +843,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="diplomeObtenu">Diplôme obtenu (si études supérieures)</label>
+                            <label for="diplomeObtenu">Dernier diplôme obtenu</label>
                             <input type="text" id="diplomeObtenu" name="diplomeObtenu" class="form-control"
                                 placeholder="Licence, Master, etc.">
                         </div>
@@ -692,8 +857,7 @@
                                     <option value="0">Aucun</option>
                                     <option value="1">Débutant</option>
                                     <option value="2">Intermédiaire</option>
-                                    <option value="3">Avancé</option>
-                                    <option value="4">Courant</option>
+                                    <option value="3">Courant</option>
                                 </select>
                             </div>
                             <div class="form-group">
@@ -702,8 +866,7 @@
                                     <option value="0">Aucun</option>
                                     <option value="1">Débutant</option>
                                     <option value="2">Intermédiaire</option>
-                                    <option value="3">Avancé</option>
-                                    <option value="4">Courant</option>
+                                    <option value="3">Courant</option>
                                 </select>
                             </div>
                             <div class="form-group">
@@ -712,8 +875,7 @@
                                     <option value="0">Aucun</option>
                                     <option value="1">Débutant</option>
                                     <option value="2">Intermédiaire</option>
-                                    <option value="3">Avancé</option>
-                                    <option value="4">Courant</option>
+                                    <option value="3">Courant</option>
                                 </select>
                             </div>
                         </div>
@@ -779,8 +941,8 @@
                         </div>
                     </div>
 
-                    <!-- SECTION 4: Bourses -->
-                    <div class="form-section" data-section="4">
+                    <!-- SECTION 5: Bourses -->
+                    <div class="form-section" data-section="5">
                         <h3 class="section-title">
                             <span class="icon">💰</span>
                             Demandes de bourses
@@ -832,12 +994,14 @@
                         <div class="external-link-box">
                             <h5>🌍 Bourse MASSA</h5>
                             <p
-                                style="font-size: var(--font-size-sm); color: var(--color-gray-600); margin-bottom: var(--spacing-2);">
+                                style="font-size: var(--font-size-sm); color: var(--color-gray-600); margin-bottom: var(--spacing-3);">
                                 Programme d'aide aux jeunes Juifs de 18 à 30 ans souhaitant effectuer un séjour prolongé
                                 en Israël.
                             </p>
-                            <p><a href="https://www.masaisrael.org/fr/" target="_blank" rel="noopener">→ Faire ma
-                                    demande sur le site MASSA</a></p>
+                            <a href="https://www.masaisrael.org/fr/" target="_blank" rel="noopener"
+                                style="display: inline-block; background: linear-gradient(135deg, #3182ce 0%, #2c5282 100%); color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: transform 0.2s, box-shadow 0.2s;">
+                                🌍 Faire ma demande MASSA →
+                            </a>
 
                             <div style="margin-top: var(--spacing-3);">
                                 <div class="form-group">
@@ -883,11 +1047,13 @@
                         <div class="external-link-box">
                             <h5>📚 Bourse TEVMI</h5>
                             <p
-                                style="font-size: var(--font-size-sm); color: var(--color-gray-600); margin-bottom: var(--spacing-2);">
+                                style="font-size: var(--font-size-sm); color: var(--color-gray-600); margin-bottom: var(--spacing-3);">
                                 Bourse dédiée aux étudiants en Yéshiva.
                             </p>
-                            <p><a href="https://form.jotform.com/253134471672456" target="_blank" rel="noopener">→ Faire
-                                    ma demande TEVMI</a></p>
+                            <a href="https://form.jotform.com/253134471672456" target="_blank" rel="noopener"
+                                style="display: inline-block; background: linear-gradient(135deg, #38a169 0%, #276749 100%); color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: transform 0.2s, box-shadow 0.2s;">
+                                📚 Faire ma demande TEVMI →
+                            </a>
 
                             <div style="margin-top: var(--spacing-3);">
                                 <div class="form-group">
@@ -931,7 +1097,7 @@
                     </div>
 
                     <!-- SECTION 5: Documents -->
-                    <div class="form-section" data-section="5">
+                    <div class="form-section" data-section="6">
                         <h3 class="section-title">
                             <span class="icon">📄</span>
                             Documents à fournir
@@ -1040,7 +1206,7 @@
                     </div>
 
                     <!-- SECTION 6: Médical -->
-                    <div class="form-section" data-section="6">
+                    <div class="form-section" data-section="7">
                         <h3 class="section-title">
                             <span class="icon">🏥</span>
                             Informations médicales
@@ -1130,7 +1296,7 @@
                     </div>
 
                     <!-- SECTION 7: Validation -->
-                    <div class="form-section" data-section="7">
+                    <div class="form-section" data-section="8">
                         <h3 class="section-title">
                             <span class="icon">✅</span>
                             Validation de l'inscription
