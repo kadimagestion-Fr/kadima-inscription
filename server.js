@@ -14,7 +14,6 @@ const PDFDocument = require('pdfkit');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// ===== Configuration =====
 const CONFIG = {
     // Session courante (année de début)
     sessionAnnee: 2026,
@@ -25,6 +24,12 @@ const CONFIG = {
         pass: process.env.GMAIL_PASS || ''
     }
 };
+
+// ===== Middlewares =====
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Fichier pour stocker le compteur NIU
 const niuCounterFile = path.join(__dirname, 'data', 'niu_counter.json');
