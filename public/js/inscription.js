@@ -8,10 +8,17 @@
 
     // ===== Configuration =====
     const CONFIG = {
-        totalSteps: 7,
+        totalSteps: 8,
         maxFileSize: 5 * 1024 * 1024, // 5 Mo
         allowedTypes: ['application/pdf', 'image/jpeg', 'image/png'],
-        apiEndpoint: '/api/inscription' // À configurer selon le backend
+        apiEndpoint: '/api/inscription', // À configurer selon le backend
+
+        // Validation date de naissance (à mettre à jour chaque année)
+        // L'étudiant doit avoir entre 18 et 35 ans à la rentrée
+        dateNaissance: {
+            anneeMin: 1990,  // Nés après 1990 (max ~35 ans)
+            anneeMax: 2008   // Nés avant 2008 (min ~18 ans)
+        }
     };
 
     // ===== État du formulaire =====
@@ -34,7 +41,7 @@
         setupEventListeners();
         setupConditionalFields();
         setupFileUploads();
-        setupFratrieCounter();
+        // setupFratrieCounter(); // Désactivé - section fratrie supprimée v1.2
         setupIndicatifAutre();
         setupRepresentantsLegaux();
         setDefaultDate();
@@ -152,6 +159,7 @@
         if (!formGroup) return true;
 
         let isValid = true;
+        let errorMessage = 'Ce champ est obligatoire';
         const value = field.value.trim();
 
         // Champ requis
@@ -169,6 +177,24 @@
         if (field.type === 'email' && value) {
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             isValid = emailRegex.test(value);
+            if (!isValid) errorMessage = 'Adresse email invalide';
+        }
+
+        // Validation date de naissance
+        if (field.id === 'dateNaissance' && value) {
+            const anneeNaissance = new Date(value).getFullYear();
+            const { anneeMin, anneeMax } = CONFIG.dateNaissance;
+
+            if (anneeNaissance < anneeMin || anneeNaissance > anneeMax) {
+                isValid = false;
+                errorMessage = `La date de naissance doit être entre ${anneeMin} et ${anneeMax}`;
+            }
+        }
+
+        // Mise à jour du message d'erreur
+        const errorSpan = formGroup.querySelector('.error-message');
+        if (errorSpan) {
+            errorSpan.textContent = errorMessage;
         }
 
         // Mise à jour visuelle
@@ -233,6 +259,20 @@
         document.querySelectorAll('input[name="demandeTevmi"]').forEach(radio => {
             radio.addEventListener('change', function () {
                 document.getElementById('tevmiFields').classList.toggle('visible', this.value === 'oui');
+            });
+        });
+
+        // Bourse CROUS (section Situation financière)
+        document.querySelectorAll('input[name="bourseCrous"]').forEach(radio => {
+            radio.addEventListener('change', function () {
+                document.getElementById('crousFields').classList.toggle('visible', this.value === 'oui');
+            });
+        });
+
+        // Travail étudiant (section Situation financière)
+        document.querySelectorAll('input[name="etudiantTravaille"]').forEach(radio => {
+            radio.addEventListener('change', function () {
+                document.getElementById('travailFields').classList.toggle('visible', this.value === 'oui');
             });
         });
 
