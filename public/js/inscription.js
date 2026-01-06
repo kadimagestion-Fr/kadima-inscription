@@ -187,7 +187,7 @@
 
             if (anneeNaissance < anneeMin || anneeNaissance > anneeMax) {
                 isValid = false;
-                errorMessage = `La date de naissance doit être entre ${anneeMin} et ${anneeMax}`;
+                errorMessage = `L'année de naissance doit être comprise entre ${anneeMin} et ${anneeMax}`;
             }
         }
 
