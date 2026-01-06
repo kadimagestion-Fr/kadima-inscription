@@ -1,51 +1,44 @@
 /**
  * ═══════════════════════════════════════════════════════════════════════════
- * KADIMA - Configuration Base de Données MariaDB
+ * KADIMA - Configuration Base de Données PostgreSQL
  * ═══════════════════════════════════════════════════════════════════════════
  * 
- * @version     1.0.0
- * @date        06 janvier 2026 16:18
+ * @version     1.1.0
+ * @date        06 janvier 2026 16:56
  * @author      Maxi (Assistant IA) & Sassi
  * 
  * ───────────────────────────────────────────────────────────────────────────
  * HISTORIQUE DES MODIFICATIONS
  * ───────────────────────────────────────────────────────────────────────────
  * 
+ * v1.1.0 - 06 janvier 2026 16:56
+ *   - Migration vers PostgreSQL (Render)
+ *   - Adaptation des requêtes SQL
+ * 
  * v1.0.0 - 06 janvier 2026 16:18
- *   - Configuration initiale MariaDB IONOS
- *   - Création des tables
+ *   - Configuration initiale MariaDB IONOS (abandonnée)
  * 
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
-const mysql = require('mysql2/promise');
+const { Pool } = require('pg');
 
-// Configuration de connexion MariaDB IONOS
-const dbConfig = {
-    host: process.env.DB_HOST || 'db5019332807.hosting-data.io',
-    port: process.env.DB_PORT || 3306,
-    user: process.env.DB_USER || 'dbu2656716',
-    password: process.env.DB_PASSWORD || '',
-    database: process.env.DB_NAME || 'dbs15141387',
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0
-};
-
-// Pool de connexions
-let pool = null;
+// Configuration de connexion PostgreSQL Render
+// Utilise DATABASE_URL si disponible (interne Render), sinon variables individuelles
+const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : false
+});
 
 /**
  * Initialise la connexion à la base de données
  */
 async function initDatabase() {
     try {
-        pool = mysql.createPool(dbConfig);
-
         // Test de connexion
-        const connection = await pool.getConnection();
-        console.log('🗄️  Base de données MariaDB connectée');
-        connection.release();
+        const client = await pool.connect();
+        console.log('🗄️  Base de données PostgreSQL connectée');
+        client.release();
 
         // Créer les tables si elles n'existent pas
         await createTables();
@@ -65,12 +58,12 @@ async function createTables() {
     const queries = [
         // Table des inscriptions
         `CREATE TABLE IF NOT EXISTS inscriptions (
-            id INT AUTO_INCREMENT PRIMARY KEY,
+            id SERIAL PRIMARY KEY,
             niu VARCHAR(20) UNIQUE NOT NULL,
             session VARCHAR(20) NOT NULL,
             statut_id INT DEFAULT 1,
-            date_inscription DATETIME DEFAULT CURRENT_TIMESTAMP,
-            date_modification DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            date_inscription TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            date_modification TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             
             -- Identité étudiant
             nom VARCHAR(100) NOT NULL,
@@ -87,8 +80,8 @@ async function createTables() {
             passeport VARCHAR(50),
             
             -- Données complètes (JSON pour flexibilité)
-            donnees_completes JSON,
-            donnees_meta JSON,
+            donnees_completes JSONB,
+            donnees_meta JSONB,
             
             -- Finances
             revenus_mensuels DECIMAL(10,2),
@@ -102,29 +95,30 @@ async function createTables() {
             bourse_validee DECIMAL(10,2),
             
             -- Documents
-            documents JSON,
-            pdf_path VARCHAR(255),
-            
-            INDEX idx_niu (niu),
-            INDEX idx_session (session),
-            INDEX idx_statut (statut_id),
-            INDEX idx_nom (nom)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
+            documents JSONB,
+            pdf_path VARCHAR(255)
+        )`,
+
+        // Index pour inscriptions
+        `CREATE INDEX IF NOT EXISTS idx_inscriptions_niu ON inscriptions(niu)`,
+        `CREATE INDEX IF NOT EXISTS idx_inscriptions_session ON inscriptions(session)`,
+        `CREATE INDEX IF NOT EXISTS idx_inscriptions_statut ON inscriptions(statut_id)`,
+        `CREATE INDEX IF NOT EXISTS idx_inscriptions_nom ON inscriptions(nom)`,
 
         // Table des statuts
         `CREATE TABLE IF NOT EXISTS statuts (
-            id INT AUTO_INCREMENT PRIMARY KEY,
+            id SERIAL PRIMARY KEY,
             code VARCHAR(20) UNIQUE NOT NULL,
             libelle VARCHAR(100) NOT NULL,
             couleur VARCHAR(7) DEFAULT '#6c757d',
             ordre INT DEFAULT 0,
             actif BOOLEAN DEFAULT TRUE,
-            actions JSON
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
+            actions JSONB
+        )`,
 
         // Table des bourses
         `CREATE TABLE IF NOT EXISTS bourses (
-            id INT AUTO_INCREMENT PRIMARY KEY,
+            id SERIAL PRIMARY KEY,
             nom VARCHAR(100) NOT NULL,
             lien VARCHAR(500),
             montant_min DECIMAL(10,2),
@@ -132,49 +126,49 @@ async function createTables() {
             date_debut DATE,
             date_fin DATE,
             actif BOOLEAN DEFAULT TRUE
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
+        )`,
 
         // Table des devises
         `CREATE TABLE IF NOT EXISTS devises (
-            id INT AUTO_INCREMENT PRIMARY KEY,
+            id SERIAL PRIMARY KEY,
             code VARCHAR(3) UNIQUE NOT NULL,
             symbole VARCHAR(5),
             libelle VARCHAR(50),
             taux_eur DECIMAL(10,6) DEFAULT 1.000000,
-            date_maj DATETIME DEFAULT CURRENT_TIMESTAMP
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
+            date_maj TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )`,
 
         // Table des modalités de paiement
         `CREATE TABLE IF NOT EXISTS modalites_paiement (
-            id INT AUTO_INCREMENT PRIMARY KEY,
+            id SERIAL PRIMARY KEY,
             code VARCHAR(20) UNIQUE NOT NULL,
             libelle VARCHAR(100) NOT NULL,
             actif BOOLEAN DEFAULT TRUE
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
+        )`,
 
         // Table des plateformes de paiement
         `CREATE TABLE IF NOT EXISTS plateformes (
-            id INT AUTO_INCREMENT PRIMARY KEY,
+            id SERIAL PRIMARY KEY,
             code VARCHAR(20) UNIQUE NOT NULL,
             libelle VARCHAR(100) NOT NULL,
             lien VARCHAR(500),
             actif BOOLEAN DEFAULT TRUE
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
+        )`,
 
         // Table des utilisateurs (admin)
         `CREATE TABLE IF NOT EXISTS utilisateurs (
-            id INT AUTO_INCREMENT PRIMARY KEY,
+            id SERIAL PRIMARY KEY,
             email VARCHAR(255) UNIQUE NOT NULL,
             mot_de_passe VARCHAR(255) NOT NULL,
             nom VARCHAR(100),
             role VARCHAR(20) DEFAULT 'admin',
             actif BOOLEAN DEFAULT TRUE,
-            date_creation DATETIME DEFAULT CURRENT_TIMESTAMP
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`
+            date_creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )`
     ];
 
     for (const query of queries) {
-        await pool.execute(query);
+        await pool.query(query);
     }
 
     // Insérer les données par défaut
@@ -202,8 +196,10 @@ async function insertDefaultData() {
     ];
 
     for (const statut of statuts) {
-        await pool.execute(
-            `INSERT IGNORE INTO statuts (code, libelle, couleur, ordre) VALUES (?, ?, ?, ?)`,
+        await pool.query(
+            `INSERT INTO statuts (code, libelle, couleur, ordre) 
+             VALUES ($1, $2, $3, $4) 
+             ON CONFLICT (code) DO NOTHING`,
             [statut.code, statut.libelle, statut.couleur, statut.ordre]
         );
     }
@@ -217,8 +213,10 @@ async function insertDefaultData() {
     ];
 
     for (const devise of devises) {
-        await pool.execute(
-            `INSERT IGNORE INTO devises (code, symbole, libelle, taux_eur) VALUES (?, ?, ?, ?)`,
+        await pool.query(
+            `INSERT INTO devises (code, symbole, libelle, taux_eur) 
+             VALUES ($1, $2, $3, $4) 
+             ON CONFLICT (code) DO NOTHING`,
             [devise.code, devise.symbole, devise.libelle, devise.taux]
         );
     }
@@ -227,12 +225,15 @@ async function insertDefaultData() {
     const bourses = [
         { nom: 'Bourse CROUS', lien: 'https://www.messervices.etudiant.gouv.fr', min: 0, max: 6000 },
         { nom: 'Bourse MASSA', lien: 'https://www.masaisrael.org', min: 0, max: 10000 },
-        { nom: 'Bourse Kadima', lien: null, min: 0, max: 5000 }
+        { nom: 'Bourse TEVMI', lien: 'https://form.jotform.com/253134471672456', min: 0, max: 5000 },
+        { nom: 'Bourse COBY', lien: null, min: 0, max: 5000 }
     ];
 
     for (const bourse of bourses) {
-        await pool.execute(
-            `INSERT IGNORE INTO bourses (nom, lien, montant_min, montant_max) VALUES (?, ?, ?, ?)`,
+        await pool.query(
+            `INSERT INTO bourses (nom, lien, montant_min, montant_max) 
+             VALUES ($1, $2, $3, $4) 
+             ON CONFLICT DO NOTHING`,
             [bourse.nom, bourse.lien, bourse.min, bourse.max]
         );
     }
@@ -245,23 +246,27 @@ async function insertDefaultData() {
     ];
 
     for (const modalite of modalites) {
-        await pool.execute(
-            `INSERT IGNORE INTO modalites_paiement (code, libelle) VALUES (?, ?)`,
+        await pool.query(
+            `INSERT INTO modalites_paiement (code, libelle) 
+             VALUES ($1, $2) 
+             ON CONFLICT (code) DO NOTHING`,
             [modalite.code, modalite.libelle]
         );
     }
 
     // Plateformes par défaut
     const plateformes = [
-        { code: 'NEDARIM', libelle: 'Nedarim', lien: 'https://www.nedarim.org' },
-        { code: 'PAYPAL', libelle: 'PayPal', lien: 'https://www.paypal.com' },
-        { code: 'ETHICAPAY', libelle: 'Ethicapay', lien: 'https://www.ethicapay.com' }
+        { code: 'NEDARIM', libelle: 'Nedarim' },
+        { code: 'PAYPAL', libelle: 'PayPal' },
+        { code: 'ETHICAPAY', libelle: 'Ethicapay' }
     ];
 
     for (const plateforme of plateformes) {
-        await pool.execute(
-            `INSERT IGNORE INTO plateformes (code, libelle, lien) VALUES (?, ?, ?)`,
-            [plateforme.code, plateforme.libelle, plateforme.lien]
+        await pool.query(
+            `INSERT INTO plateformes (code, libelle) 
+             VALUES ($1, $2) 
+             ON CONFLICT (code) DO NOTHING`,
+            [plateforme.code, plateforme.libelle]
         );
     }
 }
@@ -277,15 +282,12 @@ function getPool() {
  * Ferme la connexion
  */
 async function closeDatabase() {
-    if (pool) {
-        await pool.end();
-        console.log('🗄️  Connexion base de données fermée');
-    }
+    await pool.end();
+    console.log('🗄️  Connexion base de données fermée');
 }
 
 module.exports = {
     initDatabase,
     getPool,
-    closeDatabase,
-    dbConfig
+    closeDatabase
 };
