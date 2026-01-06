@@ -293,6 +293,19 @@ function getNiveauLabel(niveau) {
     return niveaux[parseInt(niveau) || 0];
 }
 
+// ===== Fonction Date Israël =====
+function getDateIsrael() {
+    return new Date().toLocaleString('fr-FR', {
+        timeZone: 'Asia/Jerusalem',
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+    });
+}
+
 // ===== Configuration Email =====
 let transporter = null;
 if (CONFIG.email.user && CONFIG.email.pass) {
@@ -301,7 +314,10 @@ if (CONFIG.email.user && CONFIG.email.pass) {
         auth: {
             user: CONFIG.email.user,
             pass: CONFIG.email.pass
-        }
+        },
+        connectionTimeout: 30000, // 30 secondes
+        greetingTimeout: 30000,
+        socketTimeout: 60000 // 60 secondes pour l'envoi
     });
     console.log('📧 Envoi d\'emails activé');
 } else {
@@ -417,7 +433,7 @@ app.post('/api/inscription', upload.fields([
         console.log('\n========================================');
         console.log('📥 NOUVELLE INSCRIPTION REÇUE');
         console.log('========================================');
-        console.log('Date:', new Date().toLocaleString('fr-FR'));
+        console.log('Date:', getDateIsrael());
 
         const data = req.body;
 
