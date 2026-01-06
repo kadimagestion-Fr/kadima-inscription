@@ -4,13 +4,23 @@
  * Gestion des inscriptions et bourses - Programme Kadima
  * ═══════════════════════════════════════════════════════════════════════════
  * 
- * @version     1.4.0
- * @date        06 janvier 2026 17:26
+ * @version     1.5.0
+ * @date        06 janvier 2026 17:50
  * @author      Maxi (Assistant IA) & Sassi
  * 
  * ───────────────────────────────────────────────────────────────────────────
  * HISTORIQUE DES MODIFICATIONS
  * ───────────────────────────────────────────────────────────────────────────
+ * 
+ * v1.5.0 - 06 janvier 2026 17:50
+ *   - Formulaire v1.2 : nouvelle section Situation financière
+ *   - Dates naissance paramétrables (CONFIG)
+ *   - Passeport obligatoire
+ *   - Suppression: études secondaires, fratrie
+ *   - Niveau hébreu: retrait option "Avancé"
+ *   - Liens MASSA/TEVMI plus visibles
+ *   - PDF: données médicales exclues (confidentialité)
+ *   - 8 étapes au lieu de 7
  * 
  * v1.4.0 - 06 janvier 2026 17:26
  *   - Migration vers PostgreSQL Render (abandon MariaDB IONOS)
@@ -212,17 +222,32 @@ async function genererPDFFormulaire(data, niu, outputPath) {
             }
 
             doc.moveDown();
-            addField(doc, 'Nb frères/soeurs', data.nbFratrie || '0');
-            addField(doc, 'Contact en Israël', data.contactIsrael || 'Non renseigné');
+            addField(doc, 'Contact en Isräel', data.contactIsrael || 'Non renseigné');
+
+            doc.moveDown(2);
+
+            // Section Situation financière
+            addSection(doc, 'SITUATION FINANCIÈRE');
+            addField(doc, 'Revenus mensuels foyer', data.revenusMensuels ? `${data.revenusMensuels} ${data.deviseRevenus || 'EUR'}` : 'Non renseigné');
+            addField(doc, 'Allocations CAF/APL', data.allocationsCaf ? `${data.allocationsCaf} €` : 'Non renseigné');
+            addField(doc, 'Loyer mensuel', data.loyerMensuel ? `${data.loyerMensuel} €` : 'Non renseigné');
+            addField(doc, 'Personnes au foyer', data.nbPersonnesFoyer || 'Non renseigné');
+            addField(doc, 'Enfants à charge', data.nbEnfantsCharge || '0');
+            addField(doc, 'Quotient familial CAF', data.quotientFamilial || 'Non renseigné');
+            doc.moveDown();
+            addField(doc, 'Coût scolarité précédente', data.coutScolaritePrecedente ? `${data.coutScolaritePrecedente} ${data.deviseScolarite || 'EUR'}/mois` : 'Non renseigné');
+            addField(doc, 'Participation possible Kadima', data.participationPossible ? `${data.participationPossible} ${data.deviseParticipation || 'EUR'}/mois` : 'Non renseigné');
+            addField(doc, 'Bourse CROUS', data.bourseCrous === 'oui' ? `Oui - Échelon ${data.crousEchelon || '?'} (${data.crousMontant || '?'}€/mois)` : 'Non');
+            addField(doc, 'Autres bourses', data.autresBourses || 'Aucune');
+            addField(doc, 'Étudiant travaille', data.etudiantTravaille === 'oui' ? `Oui - ${data.travailType || '?'} (${data.travailRevenu || '?'}€/mois)` : 'Non');
 
             doc.moveDown();
 
             // Section Parcours
             addSection(doc, 'PARCOURS SCOLAIRE');
-            addField(doc, 'Études secondaires', data.etudesSecondaires || 'Non renseigné');
             addField(doc, 'Baccalauréat', data.baccalaureat || 'Non renseigné');
             addField(doc, 'École/Université', data.nomEcole || 'Non renseigné');
-            addField(doc, 'Diplôme obtenu', data.diplomeObtenu || 'Non renseigné');
+            addField(doc, 'Dernier diplôme obtenu', data.diplomeObtenu || 'Non renseigné');
             doc.moveDown();
             addField(doc, 'Hébreu oral', getNiveauLabel(data.hebreuOral));
             addField(doc, 'Hébreu lecture', getNiveauLabel(data.hebreuLecture));
@@ -260,20 +285,15 @@ async function genererPDFFormulaire(data, niu, outputPath) {
 
             doc.moveDown(2);
 
-            // Section Médical
-            addSection(doc, 'INFORMATIONS MÉDICALES (CONFIDENTIEL)');
-            addField(doc, 'Allergies', data.allergies === 'oui' ? 'Oui' : 'Non');
-            if (data.allergies === 'oui') {
-                addField(doc, 'Détail allergies', data.allergiesPrecisions || 'Non précisé');
-            }
-            addField(doc, 'Traitement médical', data.traitementMedical === 'oui' ? 'Oui' : 'Non');
-            if (data.traitementMedical === 'oui') {
-                addField(doc, 'Détail traitement', data.traitementPrecisions || 'Non précisé');
-            }
-            addField(doc, 'Suivi psychiatrique', data.suiviPsy === 'oui' ? 'Oui' : 'Non');
-            if (data.suiviPsy === 'oui') {
-                addField(doc, 'Détail suivi', data.psyPrecisions || 'Non précisé');
-            }
+            // Section Médical (données confidentielles - non incluses dans le PDF)
+            addSection(doc, 'INFORMATIONS MÉDICALES');
+            doc.fontSize(10).font('Helvetica-Oblique')
+                .fillColor('#666666')
+                .text('Les informations médicales sont strictement confidentielles.')
+                .text('Elles sont enregistrées séparément et ne figurent pas dans ce document.')
+                .text('Merci de contacter l\'administration pour toute question.')
+                .moveDown();
+            doc.fillColor('black').font('Helvetica');
 
             doc.moveDown(2);
 
