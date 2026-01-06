@@ -4,13 +4,19 @@
  * Gestion des inscriptions et bourses - Programme Kadima
  * ═══════════════════════════════════════════════════════════════════════════
  * 
- * @version     1.2.0
- * @date        06 janvier 2026 16:07
+ * @version     1.3.0
+ * @date        06 janvier 2026 16:28
  * @author      Maxi (Assistant IA) & Sassi
  * 
  * ───────────────────────────────────────────────────────────────────────────
  * HISTORIQUE DES MODIFICATIONS
  * ───────────────────────────────────────────────────────────────────────────
+ * 
+ * v1.3.0 - 06 janvier 2026 16:28
+ *   - Intégration base de données MariaDB IONOS
+ *   - Création module database.js (connexion, tables, données par défaut)
+ *   - Tables: inscriptions, statuts, bourses, devises, modalités, plateformes
+ *   - Ajout dépendance mysql2
  * 
  * v1.2.0 - 06 janvier 2026 16:07
  *   - Migration de Gmail vers Resend pour l'envoi d'emails
@@ -41,6 +47,7 @@ const path = require('path');
 const fs = require('fs');
 const { Resend } = require('resend');
 const PDFDocument = require('pdfkit');
+const { initDatabase, getPool } = require('./database');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -612,13 +619,26 @@ app.use((err, req, res, next) => {
 });
 
 // Démarrage
-app.listen(PORT, () => {
-    console.log('\n🚀 ============================================');
-    console.log('   KADIMA - Serveur de gestion des inscriptions');
-    console.log('   ============================================');
-    console.log(`\n   📍 URL: http://localhost:${PORT}`);
-    console.log(`   📝 Formulaire: http://localhost:${PORT}/inscription.html`);
-    console.log(`   📁 Uploads: ${uploadsDir}`);
-    console.log(`   📅 Session: ${CONFIG.sessionAnnee}-${CONFIG.sessionAnnee + 1}`);
-    console.log('\n   En attente d\'inscriptions...\n');
-});
+async function startServer() {
+    // Initialiser la base de données
+    const dbConnected = await initDatabase();
+
+    app.listen(PORT, () => {
+        console.log('\n🚀 ============================================');
+        console.log('   KADIMA - Serveur de gestion des inscriptions');
+        console.log('   ============================================');
+        console.log(`\n   📍 URL: http://localhost:${PORT}`);
+        console.log(`   📝 Formulaire: http://localhost:${PORT}/inscription.html`);
+        console.log(`   📁 Uploads: ${uploadsDir}`);
+        console.log(`   📅 Session: ${CONFIG.sessionAnnee}-${CONFIG.sessionAnnee + 1}`);
+        if (dbConnected) {
+            console.log('   🗄️  Base de données: MariaDB IONOS connectée');
+        } else {
+            console.log('   ⚠️  Base de données: Mode fichiers JSON (fallback)');
+        }
+        console.log('\n   En attente d\'inscriptions...\n');
+    });
+}
+
+// Lancer le serveur
+startServer().catch(console.error);
