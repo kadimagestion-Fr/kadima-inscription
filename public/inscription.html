@@ -387,29 +387,30 @@
 
                         <!-- Représentant légal 1 -->
                         <div id="representant1Section">
-                            <div class="form-row" style="align-items: center;">
+                            <div class="form-row" style="align-items: center; flex-wrap: wrap; gap: var(--spacing-2);">
                                 <h4
-                                    style="margin: var(--spacing-4) 0 var(--spacing-3); color: var(--color-gray-600); flex: 1;">
+                                    style="margin: var(--spacing-4) 0 var(--spacing-3); color: var(--color-gray-600); margin-right: var(--spacing-3);">
                                     Représentant légal 1 (obligatoire)
                                 </h4>
-                                <div class="form-group" style="flex: 2; margin-bottom: 0;">
-                                    <label>Type <span class="required">*</span></label>
-                                    <div class="radio-group" style="display: flex; gap: var(--spacing-4);">
-                                        <div class="radio-item">
-                                            <input type="radio" id="rl1Pere" name="typeRL1" value="pere" checked>
-                                            <label for="rl1Pere">Père</label>
-                                        </div>
-                                        <div class="radio-item">
-                                            <input type="radio" id="rl1Mere" name="typeRL1" value="mere">
-                                            <label for="rl1Mere">Mère</label>
-                                        </div>
-                                        <div class="radio-item">
-                                            <input type="radio" id="rl1Tuteur" name="typeRL1" value="tuteur">
-                                            <label for="rl1Tuteur">Tuteur</label>
-                                        </div>
+                                <span
+                                    style="color: var(--color-gray-500); font-size: 0.9em; margin-right: var(--spacing-2);">Type
+                                    <span class="required">*</span></span>
+                                <div class="radio-group" style="display: flex; gap: var(--spacing-4); flex-wrap: wrap;">
+                                    <div class="radio-item">
+                                        <input type="radio" id="rl1Pere" name="typeRL1" value="pere" checked>
+                                        <label for="rl1Pere">Père</label>
+                                    </div>
+                                    <div class="radio-item">
+                                        <input type="radio" id="rl1Mere" name="typeRL1" value="mere">
+                                        <label for="rl1Mere">Mère</label>
+                                    </div>
+                                    <div class="radio-item">
+                                        <input type="radio" id="rl1Tuteur" name="typeRL1" value="tuteur">
+                                        <label for="rl1Tuteur">Tuteur</label>
                                     </div>
                                 </div>
                             </div>
+
 
                             <div class="form-row">
                                 <div class="form-group">
@@ -502,34 +503,34 @@
 
                         <!-- Représentant légal 2 (optionnel) -->
                         <div id="representant2Section">
-                            <div class="form-row" style="align-items: center;">
+                            <div class="form-row" style="align-items: center; flex-wrap: wrap; gap: var(--spacing-2);">
                                 <h4
-                                    style="margin: var(--spacing-6) 0 var(--spacing-3); color: var(--color-gray-600); flex: 1;">
+                                    style="margin: var(--spacing-6) 0 var(--spacing-3); color: var(--color-gray-600); margin-right: var(--spacing-3);">
                                     Représentant légal 2 <span
                                         style="font-weight: normal; font-size: 0.9em;">(optionnel)</span>
                                 </h4>
-                                <div class="form-group" style="flex: 2; margin-bottom: 0;">
-                                    <label>Type</label>
-                                    <div class="radio-group" style="display: flex; gap: var(--spacing-4);">
-                                        <div class="radio-item">
-                                            <input type="radio" id="rl2Aucun" name="typeRL2" value="" checked>
-                                            <label for="rl2Aucun">Non renseigné</label>
-                                        </div>
-                                        <div class="radio-item">
-                                            <input type="radio" id="rl2Pere" name="typeRL2" value="pere">
-                                            <label for="rl2Pere">Père</label>
-                                        </div>
-                                        <div class="radio-item">
-                                            <input type="radio" id="rl2Mere" name="typeRL2" value="mere">
-                                            <label for="rl2Mere">Mère</label>
-                                        </div>
-                                        <div class="radio-item">
-                                            <input type="radio" id="rl2Tuteur" name="typeRL2" value="tuteur">
-                                            <label for="rl2Tuteur">Tuteur</label>
-                                        </div>
+                                <span
+                                    style="color: var(--color-gray-500); font-size: 0.9em; margin-right: var(--spacing-2);">Type</span>
+                                <div class="radio-group" style="display: flex; gap: var(--spacing-4); flex-wrap: wrap;">
+                                    <div class="radio-item">
+                                        <input type="radio" id="rl2Aucun" name="typeRL2" value="" checked>
+                                        <label for="rl2Aucun">Non renseigné</label>
+                                    </div>
+                                    <div class="radio-item">
+                                        <input type="radio" id="rl2Pere" name="typeRL2" value="pere">
+                                        <label for="rl2Pere">Père</label>
+                                    </div>
+                                    <div class="radio-item">
+                                        <input type="radio" id="rl2Mere" name="typeRL2" value="mere">
+                                        <label for="rl2Mere">Mère</label>
+                                    </div>
+                                    <div class="radio-item">
+                                        <input type="radio" id="rl2Tuteur" name="typeRL2" value="tuteur">
+                                        <label for="rl2Tuteur">Tuteur</label>
                                     </div>
                                 </div>
                             </div>
+
 
                             <div class="conditional-field" id="rl2Fields">
                                 <div class="form-row">
@@ -651,10 +652,11 @@
 
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="revenusMensuels">Revenus mensuels du foyer</label>
+                                <label for="revenusMensuels">Revenus mensuels du foyer <span
+                                        class="required">*</span></label>
                                 <div style="display: flex; gap: var(--spacing-2);">
                                     <input type="number" id="revenusMensuels" name="revenusMensuels"
-                                        class="form-control" placeholder="0" min="0" step="100" style="flex: 1;">
+                                        class="form-control" placeholder="0" min="0" step="1" style="flex: 1;" required>
                                     <select id="deviseRevenus" name="deviseRevenus" class="form-control"
                                         style="width: 100px;">
                                         <option value="EUR">€ EUR</option>
@@ -663,40 +665,48 @@
                                         <option value="ILS">₪ ILS</option>
                                     </select>
                                 </div>
+                                <span class="error-message">Ce champ est obligatoire</span>
                             </div>
                             <div class="form-group">
-                                <label for="allocationsCaf">Allocations CAF/APL mensuelles</label>
+                                <label for="allocationsCaf">Allocations CAF (y compris APL) mensuelles</label>
                                 <input type="number" id="allocationsCaf" name="allocationsCaf" class="form-control"
-                                    placeholder="0" min="0" step="10">
-                                <span style="font-size: 0.85em; color: var(--color-gray-500);">En euros</span>
+                                    placeholder="0" min="0" step="1">
+                                <span style="font-size: 0.85em; color: var(--color-gray-500);">En euros, arrondi à
+                                    l'unité</span>
                             </div>
                         </div>
 
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="loyerMensuel">Loyer ou échéances de prêt immobilier</label>
+                                <label for="loyerMensuel">Loyer ou échéances de prêt immobilier (hors APL) <span
+                                        class="required">*</span></label>
                                 <input type="number" id="loyerMensuel" name="loyerMensuel" class="form-control"
-                                    placeholder="0" min="0" step="50">
+                                    placeholder="0" min="0" step="1" required>
                                 <span style="font-size: 0.85em; color: var(--color-gray-500);">Par mois, en euros</span>
+                                <span class="error-message">Ce champ est obligatoire</span>
                             </div>
                             <div class="form-group">
-                                <label for="nbPersonnesFoyer">Nombre de personnes au foyer</label>
+                                <label for="nbPersonnesFoyer">Nombre de personnes au foyer <span
+                                        class="required">*</span></label>
                                 <input type="number" id="nbPersonnesFoyer" name="nbPersonnesFoyer" class="form-control"
-                                    min="1" max="20" value="1">
+                                    min="1" max="20" value="1" required>
+                                <span class="error-message">Ce champ est obligatoire</span>
                             </div>
                         </div>
 
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="nbEnfantsCharge">Nombre d'enfants à charge</label>
+                                <label for="nbEnfantsCharge">Nombre d'enfants à charge <span
+                                        class="required">*</span></label>
                                 <input type="number" id="nbEnfantsCharge" name="nbEnfantsCharge" class="form-control"
-                                    min="0" max="15" value="0">
+                                    min="0" max="15" value="0" required>
+                                <span class="error-message">Ce champ est obligatoire</span>
                             </div>
                             <div class="form-group">
                                 <label for="quotientFamilial">Quotient familial CAF <span class="tooltip-icon"
                                         title="Le quotient familial figure sur votre attestation CAF">ℹ️</span></label>
                                 <input type="number" id="quotientFamilial" name="quotientFamilial" class="form-control"
-                                    placeholder="Ex: 850" min="0">
+                                    placeholder="Ex: 850" min="0" step="1">
                             </div>
                         </div>
 
@@ -721,10 +731,11 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="participationPossible">Participation mensuelle possible pour Kadima</label>
+                                <label for="participationPossible">Participation mensuelle possible pour Kadima <span
+                                        class="required">*</span></label>
                                 <div style="display: flex; gap: var(--spacing-2);">
                                     <input type="number" id="participationPossible" name="participationPossible"
-                                        class="form-control" placeholder="0" min="0" style="flex: 1;">
+                                        class="form-control" placeholder="0" min="0" step="1" style="flex: 1;" required>
                                     <select id="deviseParticipation" name="deviseParticipation" class="form-control"
                                         style="width: 100px;">
                                         <option value="EUR">€ EUR</option>
@@ -733,6 +744,7 @@
                                         <option value="ILS">₪ ILS</option>
                                     </select>
                                 </div>
+                                <span class="error-message">Ce champ est obligatoire</span>
                             </div>
                         </div>
 
@@ -805,9 +817,18 @@
                                         placeholder="Ex: Job étudiant, CDI temps partiel...">
                                 </div>
                                 <div class="form-group">
-                                    <label for="travailRevenu">Revenu mensuel net (€)</label>
-                                    <input type="number" id="travailRevenu" name="travailRevenu" class="form-control"
-                                        placeholder="0" min="0">
+                                    <label for="travailRevenu">Revenu mensuel net</label>
+                                    <div style="display: flex; gap: var(--spacing-2);">
+                                        <input type="number" id="travailRevenu" name="travailRevenu"
+                                            class="form-control" placeholder="0" min="0" step="1" style="flex: 1;">
+                                        <select id="deviseTravail" name="deviseTravail" class="form-control"
+                                            style="width: 100px;">
+                                            <option value="EUR">€ EUR</option>
+                                            <option value="USD">$ USD</option>
+                                            <option value="CAD">$ CAD</option>
+                                            <option value="ILS">₪ ILS</option>
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1048,7 +1069,9 @@
                             <h5>📚 Bourse TEVMI</h5>
                             <p
                                 style="font-size: var(--font-size-sm); color: var(--color-gray-600); margin-bottom: var(--spacing-3);">
-                                Bourse dédiée aux étudiants en Yéshiva.
+                                Bourse financière de mobilité internationale attribuée par l'association française
+                                Transmission & Valeurs. Elle ne concerne que des élèves de nationalité française et
+                                résidant en France.
                             </p>
                             <a href="https://form.jotform.com/253134471672456" target="_blank" rel="noopener"
                                 style="display: inline-block; background: linear-gradient(135deg, #38a169 0%, #276749 100%); color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: transform 0.2s, box-shadow 0.2s;">
