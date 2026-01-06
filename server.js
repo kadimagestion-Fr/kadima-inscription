@@ -350,25 +350,43 @@ Service gestion – Programme Kadima
             });
         }
 
-        // Envoyer à l'étudiant
+        // SOLUTION TEMPORAIRE: Envoyer uniquement à l'admin (domaine Resend non vérifié)
+        // L'email contient toutes les infos de l'étudiant pour que l'admin puisse le contacter
+        const emailAdmin = `📥 NOUVELLE INSCRIPTION KADIMA
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📋 NIU: ${niu}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+👤 ÉTUDIANT:
+   Nom: ${data.nom} ${data.prenom}
+   Email: ${data.email}
+   Téléphone: ${data.telephone || 'Non renseigné'}
+
+📅 Date d'inscription: ${getDateIsrael()}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+⚠️ NOTE: L'étudiant n'a PAS reçu d'email automatique.
+Veuillez le contacter manuellement pour confirmer sa réception.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Contenu du message type à envoyer à l'étudiant:
+
+${emailContent}
+`;
+
         await resend.emails.send({
             from: 'Kadima <onboarding@resend.dev>',
-            to: data.email,
-            subject: `[‎${niu}] Formulaire pour ${data.nom} ${data.prenom} transmis avec succès`,
-            text: emailContent,
+            to: CONFIG.email.destinataire, // Admin uniquement
+            subject: `[${niu}] Nouvelle inscription: ${data.nom} ${data.prenom}`,
+            text: emailAdmin,
             attachments: attachments
         });
 
-        // Envoyer copie à l'admin
-        await resend.emails.send({
-            from: 'Kadima <onboarding@resend.dev>',
-            to: CONFIG.email.destinataire,
-            subject: `[ADMIN] [‎${niu}] Nouvelle inscription: ${data.nom} ${data.prenom}`,
-            text: `Nouvelle inscription reçue.\n\nNIU: ${niu}\nNom: ${data.nom} ${data.prenom}\nEmail: ${data.email}\n\n` + emailContent,
-            attachments: attachments
-        });
-
-        console.log(`📧 Emails envoyés à ${data.email} et ${CONFIG.email.destinataire}`);
+        console.log(`📧 Email envoyé à l'admin ${CONFIG.email.destinataire}`);
+        console.log(`⚠️  L'étudiant ${data.email} n'a PAS reçu d'email (domaine non vérifié)`);
         return true;
     } catch (error) {
         console.error('❌ Erreur envoi email Resend:', error.message);
