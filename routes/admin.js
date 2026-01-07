@@ -178,6 +178,41 @@ router.post('/logout', authMiddleware, async (req, res) => {
     }
 });
 
+// GET /api/admin/setup - Création admin initial (route temporaire)
+router.get('/setup', async (req, res) => {
+    try {
+        // Vérifier si un admin existe déjà
+        const existing = await pool.query('SELECT id FROM utilisateurs LIMIT 1');
+
+        if (existing.rows.length > 0) {
+            return res.json({
+                success: false,
+                message: 'Un utilisateur admin existe déjà'
+            });
+        }
+
+        // Créer l'admin initial
+        const hashedPassword = await bcrypt.hash('b9Dpù#7Ak&cm6wj@', CONFIG.saltRounds);
+
+        await pool.query(
+            `INSERT INTO utilisateurs (email, mot_de_passe, nom, prenom, role)
+             VALUES ($1, $2, $3, $4, $5)`,
+            ['kadima.gestion@gmail.com', hashedPassword, 'Gestion', 'Kadima', 'admin']
+        );
+
+        console.log('👤 Utilisateur admin créé via /setup');
+
+        res.json({
+            success: true,
+            message: 'Utilisateur admin créé: kadima.gestion@gmail.com'
+        });
+
+    } catch (error) {
+        console.error('Setup error:', error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
 // ═══════════════════════════════════════════════════════════════════════════
 // ROUTES STATISTIQUES
 // ═══════════════════════════════════════════════════════════════════════════
