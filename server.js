@@ -4,13 +4,25 @@
  * Gestion des inscriptions et bourses - Programme Kadima
  * ═══════════════════════════════════════════════════════════════════════════
  * 
- * @version     1.6.0
- * @date        07 janvier 2026 14:00
+ * @version     1.7.0
+ * @date        07 janvier 2026 17:05
  * @author      Maxi (Assistant IA) & Sassi
  * 
  * ───────────────────────────────────────────────────────────────────────────
  * HISTORIQUE DES MODIFICATIONS
  * ───────────────────────────────────────────────────────────────────────────
+ * 
+ * v1.7.0 - 07 janvier 2026 17:05
+ *   - Corrections PDF :
+ *     • Photo d'identité affichée en haut à droite
+ *     • Situation familiale capitalisée (Marié au lieu de marie)
+ *     • Devises toujours sur 3 caractères (EUR, USD, ILS)
+ *     • Baccalauréat formaté (En cours au lieu de en_cours)
+ *     • Libellé "Comment avez-vous connu Kadima ?" avec valeur formatée
+ *   - INSERT PostgreSQL : inscriptions enregistrées en BDD
+ *     • Visible dans le dashboard admin
+ *     • Statut initial "RECU"
+ *     • Fallback JSON si erreur BDD
  * 
  * v1.6.0 - 07 janvier 2026 14:00
  *   - Dashboard Admin v1.0
@@ -629,6 +641,61 @@ app.post('/api/inscription', upload.fields([
         const jsonPath = path.join(dossierInscription, 'inscription.json');
         fs.writeFileSync(jsonPath, JSON.stringify(inscriptionData, null, 2), 'utf8');
         console.log(`💾 Données sauvegardées: ${jsonPath}`);
+
+        // Sauvegarder dans PostgreSQL
+        try {
+            const { pool } = require('./database');
+            const sessionFormat = `${CONFIG.sessionAnnee}-${CONFIG.sessionAnnee + 1}`;
+
+            // Récupérer l'ID du statut "RECU" (statut par défaut)
+            const statutResult = await pool.query("SELECT id FROM statuts WHERE code = 'RECU' LIMIT 1");
+            const statutId = statutResult.rows.length > 0 ? statutResult.rows[0].id : 1;
+
+            await pool.query(`
+                INSERT INTO inscriptions (
+                    niu, session, statut_id, nom, prenom, date_naissance, lieu_naissance,
+                    nationalite, email, telephone, adresse, code_postal, ville, pays, passeport,
+                    donnees_completes, donnees_meta, documents, pdf_path,
+                    revenus_mensuels, devise_revenus, allocations_caf, loyer_mensuel,
+                    participation_possible, devise_participation
+                ) VALUES (
+                    $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15,
+                    $16, $17, $18, $19, $20, $21, $22, $23, $24, $25
+                )
+                ON CONFLICT (niu) DO UPDATE SET
+                    date_modification = CURRENT_TIMESTAMP,
+                    donnees_completes = $16
+            `, [
+                niu,
+                sessionFormat,
+                statutId,
+                data.nom || '',
+                data.prenom || '',
+                data.dateNaissance || null,
+                data.lieuNaissance || null,
+                data.nationalite || null,
+                data.email || '',
+                data.telephone || null,
+                data.adresse || null,
+                data.codePostal || null,
+                data.ville || null,
+                data.pays || null,
+                data.numPasseport || null,
+                JSON.stringify(data),
+                JSON.stringify(inscriptionData._meta || {}),
+                JSON.stringify(inscriptionData.fichiers || {}),
+                `Inscription_${niu}.pdf`,
+                data.revenusMensuels ? parseFloat(data.revenusMensuels) : null,
+                data.deviseRevenus || 'EUR',
+                data.allocationsCaf ? parseFloat(data.allocationsCaf) : null,
+                data.loyerMensuel ? parseFloat(data.loyerMensuel) : null,
+                data.participationPossible ? parseFloat(data.participationPossible) : null,
+                data.deviseParticipation || 'EUR'
+            ]);
+            console.log(`🗄️  Inscription sauvegardée en PostgreSQL`);
+        } catch (dbError) {
+            console.error('⚠️  Erreur PostgreSQL (continuera en mode JSON):', dbError.message);
+        }
 
         // Générer le PDF
         const pdfPath = path.join(dossierInscription, `Inscription_${niu}.pdf`);
