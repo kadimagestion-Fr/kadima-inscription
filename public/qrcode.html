@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code - Formulaire Kadima</title>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background: #f7fafc;
+        }
+
+        .container {
+            text-align: center;
+            padding: 40px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #1a365d;
+            margin-bottom: 10px;
+        }
+
+        p {
+            color: #4a5568;
+            margin-bottom: 30px;
+        }
+
+        .qr-code {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            display: inline-block;
+        }
+
+        .url {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #718096;
+            word-break: break-all;
+        }
+
+        .print-btn {
+            margin-top: 30px;
+            padding: 12px 30px;
+            background: #1a365d;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .print-btn:hover {
+            background: #2c5282;
+        }
+
+        @media print {
+            .print-btn {
+                display: none;
+            }
+
+            body {
+                background: white;
+            }
+
+            .container {
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>📱 Formulaire d'inscription Kadima</h1>
+        <p>Scannez ce QR code pour accéder au formulaire</p>
+        <div class="qr-code">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=https://kadima-inscription.onrender.com/inscription.html"
+                alt="QR Code Formulaire Kadima" width="300" height="300">
+        </div>
+        <p class="url">https://kadima-inscription.onrender.com/inscription.html</p>
+        <button class="print-btn" onclick="window.print()">🖨️ Imprimer</button>
+    </div>
+</body>
+
+</html>
