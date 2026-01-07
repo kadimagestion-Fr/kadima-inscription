@@ -210,10 +210,37 @@ async function createTables() {
         await pool.query(query);
     }
 
+    // Migrations pour colonnes/tables manquantes sur BDD existante
+    await runMigrations();
+
     // Insérer les données par défaut
     await insertDefaultData();
 
     console.log('📊 Tables créées/vérifiées avec succès');
+}
+
+/**
+ * Exécute les migrations pour les tables existantes
+ */
+async function runMigrations() {
+    const migrations = [
+        // Ajouter colonne prenom à utilisateurs si manquante
+        `ALTER TABLE utilisateurs ADD COLUMN IF NOT EXISTS prenom VARCHAR(100)`,
+        // Ajouter colonne derniere_connexion à utilisateurs si manquante
+        `ALTER TABLE utilisateurs ADD COLUMN IF NOT EXISTS derniere_connexion TIMESTAMP`,
+    ];
+
+    for (const migration of migrations) {
+        try {
+            await pool.query(migration);
+        } catch (error) {
+            // Ignorer les erreurs si la colonne existe déjà
+            if (!error.message.includes('already exists')) {
+                console.log(`Migration warning: ${error.message}`);
+            }
+        }
+    }
+    console.log('🔄 Migrations exécutées');
 }
 
 /**
