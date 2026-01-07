@@ -154,13 +154,25 @@ async function genererPDFFormulaire(data, niu, outputPath) {
                 doc.image(logoPath, 50, 45, { width: 60 });
             }
 
+            // Photo d'identité en haut à droite (si disponible)
+            if (data.photoIdentite) {
+                const photoPath = path.join(CONFIG.uploadDir, data.photoIdentite);
+                if (fs.existsSync(photoPath)) {
+                    try {
+                        doc.image(photoPath, 480, 45, { width: 70, height: 90, fit: [70, 90] });
+                    } catch (e) {
+                        console.log('Erreur chargement photo:', e.message);
+                    }
+                }
+            }
+
             // En-tête (décalé pour laisser la place au logo)
             doc.fontSize(20).font('Helvetica-Bold')
-                .text('FORMULAIRE D\'INSCRIPTION', 120, 50, { align: 'center', width: 420 });
+                .text('FORMULAIRE D\'INSCRIPTION', 120, 50, { align: 'center', width: 350 });
             doc.fontSize(14).font('Helvetica')
-                .text('Programme Kadima - Yéshiva Yéchouot Yossef', 120, 75, { align: 'center', width: 420 });
+                .text('Programme Kadima - Yéshiva Yéchouot Yossef', 120, 75, { align: 'center', width: 350 });
             doc.fontSize(12)
-                .text(`Session ${CONFIG.sessionAnnee}-${CONFIG.sessionAnnee + 1}`, 120, 95, { align: 'center', width: 420 });
+                .text(`Session ${CONFIG.sessionAnnee}-${CONFIG.sessionAnnee + 1}`, 120, 95, { align: 'center', width: 350 });
 
             doc.moveDown(3);
             doc.fontSize(16).font('Helvetica-Bold')
@@ -190,7 +202,7 @@ async function genererPDFFormulaire(data, niu, outputPath) {
                 addField(doc, 'Date obtention nat. israélienne', data.dateObtentionIsrael);
             }
             addField(doc, 'Num. passeport', data.numPasseport || 'Non renseigné');
-            addField(doc, 'Situation familiale', data.situationFamiliale);
+            addField(doc, 'Situation familiale', capitalizeFirst(data.situationFamiliale));
             addField(doc, 'Profession', data.profession || 'Non renseignée');
 
             doc.moveDown(2);
@@ -237,15 +249,15 @@ async function genererPDFFormulaire(data, niu, outputPath) {
 
             // Section Situation financière
             addSection(doc, 'SITUATION FINANCIÈRE');
-            addField(doc, 'Revenus mensuels foyer', data.revenusMensuels ? `${data.revenusMensuels} ${data.deviseRevenus || 'EUR'}` : 'Non renseigné');
-            addField(doc, 'Allocations CAF/APL', data.allocationsCaf ? `${data.allocationsCaf} €` : 'Non renseigné');
-            addField(doc, 'Loyer mensuel', data.loyerMensuel ? `${data.loyerMensuel} €` : 'Non renseigné');
+            addField(doc, 'Revenus mensuels foyer', data.revenusMensuels ? `${data.revenusMensuels} ${formatDevise(data.deviseRevenus)}` : 'Non renseigné');
+            addField(doc, 'Allocations CAF/APL', data.allocationsCaf ? `${data.allocationsCaf} EUR` : 'Non renseigné');
+            addField(doc, 'Loyer mensuel', data.loyerMensuel ? `${data.loyerMensuel} EUR` : 'Non renseigné');
             addField(doc, 'Personnes au foyer', data.nbPersonnesFoyer || 'Non renseigné');
             addField(doc, 'Enfants à charge', data.nbEnfantsCharge || '0');
             addField(doc, 'Quotient familial CAF', data.quotientFamilial || 'Non renseigné');
             doc.moveDown();
-            addField(doc, 'Coût scolarité précédente', data.coutScolaritePrecedente ? `${data.coutScolaritePrecedente} ${data.deviseScolarite || 'EUR'}/mois` : 'Non renseigné');
-            addField(doc, 'Participation possible Kadima', data.participationPossible ? `${data.participationPossible} ${data.deviseParticipation || 'EUR'}/mois` : 'Non renseigné');
+            addField(doc, 'Coût scolarité précédente', data.coutScolaritePrecedente ? `${data.coutScolaritePrecedente} ${formatDevise(data.deviseScolarite)}/mois` : 'Non renseigné');
+            addField(doc, 'Participation possible Kadima', data.participationPossible ? `${data.participationPossible} ${formatDevise(data.deviseParticipation)}/mois` : 'Non renseigné');
             addField(doc, 'Bourse CROUS', data.bourseCrous === 'oui' ? `Oui - Échelon ${data.crousEchelon || '?'} (${data.crousMontant || '?'}€/mois)` : 'Non');
             addField(doc, 'Autres bourses', data.autresBourses || 'Aucune');
             addField(doc, 'Étudiant travaille', data.etudiantTravaille === 'oui' ? `Oui - ${data.travailType || '?'} (${data.travailRevenu || '?'}€/mois)` : 'Non');
@@ -254,7 +266,7 @@ async function genererPDFFormulaire(data, niu, outputPath) {
 
             // Section Parcours
             addSection(doc, 'PARCOURS SCOLAIRE');
-            addField(doc, 'Baccalauréat', data.baccalaureat || 'Non renseigné');
+            addField(doc, 'Baccalauréat', formatBaccalaureat(data.baccalaureat));
             addField(doc, 'École/Université', data.nomEcole || 'Non renseigné');
             addField(doc, 'Dernier diplôme obtenu', data.diplomeObtenu || 'Non renseigné');
             doc.moveDown();
@@ -265,7 +277,7 @@ async function genererPDFFormulaire(data, niu, outputPath) {
             addField(doc, 'Mouvement de jeunesse', data.mouvementJeunesse || 'Aucun');
             addField(doc, 'Sports', data.sports || 'Aucun');
             addField(doc, 'Musique', data.musique || 'Aucun');
-            addField(doc, 'Comment connu Kadima', data.commentConnuKadima);
+            addField(doc, 'Comment avez-vous connu Kadima ?', formatCommentConnu(data.commentConnuKadima));
             addField(doc, 'Projets après Kadima', data.projetsApres || 'Non renseigné');
             addField(doc, 'Psychométriques', data.psychometriques === 'oui' ? 'Intéressé' : 'Non');
 
@@ -361,6 +373,51 @@ function formatDate(dateStr) {
 function getNiveauLabel(niveau) {
     const niveaux = ['Aucun', 'Débutant', 'Intermédiaire', 'Avancé', 'Courant'];
     return niveaux[parseInt(niveau) || 0];
+}
+
+// Capitaliser la première lettre
+function capitalizeFirst(str) {
+    if (!str) return 'Non renseigné';
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+}
+
+// Formater devise sur 3 caractères
+function formatDevise(devise) {
+    if (!devise) return 'EUR';
+    const devises = {
+        '€': 'EUR', 'euro': 'EUR', 'euros': 'EUR', 'eur': 'EUR',
+        '$': 'USD', 'dollar': 'USD', 'dollars': 'USD', 'usd': 'USD',
+        '₪': 'ILS', 'shekel': 'ILS', 'shekels': 'ILS', 'ils': 'ILS', 'nis': 'ILS'
+    };
+    return devises[devise.toLowerCase()] || devise.toUpperCase().substring(0, 3);
+}
+
+// Formater baccalauréat
+function formatBaccalaureat(bac) {
+    if (!bac) return 'Non renseigné';
+    const formats = {
+        'en_cours': 'En cours',
+        'obtenu': 'Obtenu',
+        'non_obtenu': 'Non obtenu',
+        'equivalence': 'Équivalence'
+    };
+    return formats[bac.toLowerCase()] || capitalizeFirst(bac);
+}
+
+// Formater comment connu Kadima
+function formatCommentConnu(value) {
+    if (!value) return 'Non renseigné';
+    const labels = {
+        'bouche_a_oreille': 'Bouche à oreille',
+        'reseaux_sociaux': 'Réseaux sociaux',
+        'site_internet': 'Site internet',
+        'ancien_etudiant': 'Ancien étudiant',
+        'famille': 'Famille',
+        'ami': 'Ami',
+        'rabbin': 'Rabbin',
+        'autre': 'Autre'
+    };
+    return labels[value.toLowerCase()] || capitalizeFirst(value);
 }
 
 // ===== Fonction Date Israël =====
