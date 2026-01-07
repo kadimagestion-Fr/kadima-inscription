@@ -4,13 +4,21 @@
  * Gestion des inscriptions et bourses - Programme Kadima
  * ═══════════════════════════════════════════════════════════════════════════
  * 
- * @version     1.5.0
- * @date        06 janvier 2026 17:50
+ * @version     1.6.0
+ * @date        07 janvier 2026 14:00
  * @author      Maxi (Assistant IA) & Sassi
  * 
  * ───────────────────────────────────────────────────────────────────────────
  * HISTORIQUE DES MODIFICATIONS
  * ───────────────────────────────────────────────────────────────────────────
+ * 
+ * v1.6.0 - 07 janvier 2026 14:00
+ *   - Dashboard Admin v1.0
+ *   - Authentification admin (bcrypt + sessions)
+ *   - API admin : login, stats, inscriptions, utilisateurs
+ *   - 11 statuts avec couleurs et workflow
+ *   - Historique des changements de statut horodaté
+ *   - Tables BDD : historique_statuts, reset_tokens, sessions
  * 
  * v1.5.0 - 06 janvier 2026 17:50
  *   - Formulaire v1.2 : nouvelle section Situation financière
@@ -62,6 +70,7 @@ const fs = require('fs');
 const { Resend } = require('resend');
 const PDFDocument = require('pdfkit');
 const { initDatabase, getPool } = require('./database');
+const { router: adminRouter, setPool: setAdminPool, initAdminUser } = require('./routes/admin');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -647,12 +656,27 @@ async function startServer() {
     // Initialiser la base de données
     const dbConnected = await initDatabase();
 
+    // Configurer les routes admin avec le pool de connexion
+    if (dbConnected) {
+        const pool = getPool();
+        setAdminPool(pool);
+
+        // Monter les routes admin
+        app.use('/api/admin', adminRouter);
+
+        // Initialiser l'utilisateur admin
+        await initAdminUser();
+
+        console.log('🔐 Routes admin activées: /api/admin/*');
+    }
+
     app.listen(PORT, () => {
         console.log('\n🚀 ============================================');
         console.log('   KADIMA - Serveur de gestion des inscriptions');
         console.log('   ============================================');
         console.log(`\n   📍 URL: http://localhost:${PORT}`);
         console.log(`   📝 Formulaire: http://localhost:${PORT}/inscription.html`);
+        console.log(`   🔐 Admin: http://localhost:${PORT}/admin/`);
         console.log(`   📁 Uploads: ${uploadsDir}`);
         console.log(`   📅 Session: ${CONFIG.sessionAnnee}-${CONFIG.sessionAnnee + 1}`);
         if (dbConnected) {

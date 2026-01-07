@@ -161,8 +161,47 @@ async function createTables() {
             email VARCHAR(255) UNIQUE NOT NULL,
             mot_de_passe VARCHAR(255) NOT NULL,
             nom VARCHAR(100),
+            prenom VARCHAR(100),
             role VARCHAR(20) DEFAULT 'admin',
             actif BOOLEAN DEFAULT TRUE,
+            date_creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            derniere_connexion TIMESTAMP
+        )`,
+
+        // Table historique des statuts
+        `CREATE TABLE IF NOT EXISTS historique_statuts (
+            id SERIAL PRIMARY KEY,
+            inscription_id INT REFERENCES inscriptions(id) ON DELETE CASCADE,
+            statut_precedent VARCHAR(20),
+            statut_nouveau VARCHAR(20) NOT NULL,
+            raison TEXT,
+            date_modification TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            utilisateur_id INT REFERENCES utilisateurs(id),
+            adresse_ip VARCHAR(45)
+        )`,
+
+        // Index pour historique
+        `CREATE INDEX IF NOT EXISTS idx_historique_inscription ON historique_statuts(inscription_id)`,
+        `CREATE INDEX IF NOT EXISTS idx_historique_date ON historique_statuts(date_modification)`,
+
+        // Table tokens reset mot de passe
+        `CREATE TABLE IF NOT EXISTS reset_tokens (
+            id SERIAL PRIMARY KEY,
+            utilisateur_id INT REFERENCES utilisateurs(id) ON DELETE CASCADE,
+            token VARCHAR(255) UNIQUE NOT NULL,
+            expire_at TIMESTAMP NOT NULL,
+            utilise BOOLEAN DEFAULT FALSE,
+            date_creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )`,
+
+        // Table sessions admin
+        `CREATE TABLE IF NOT EXISTS sessions (
+            id SERIAL PRIMARY KEY,
+            utilisateur_id INT REFERENCES utilisateurs(id) ON DELETE CASCADE,
+            token VARCHAR(255) UNIQUE NOT NULL,
+            adresse_ip VARCHAR(45),
+            user_agent TEXT,
+            expire_at TIMESTAMP NOT NULL,
             date_creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )`
     ];
@@ -181,18 +220,19 @@ async function createTables() {
  * Insère les données par défaut
  */
 async function insertDefaultData() {
-    // Statuts par défaut
+    // Statuts par défaut (11 statuts validés)
     const statuts = [
-        { code: 'RECU', libelle: 'Reçu', couleur: '#17a2b8', ordre: 1 },
-        { code: 'A_TRAITER', libelle: 'À traiter', couleur: '#007bff', ordre: 2 },
-        { code: 'INCOMPLET', libelle: 'Dossier incomplet', couleur: '#ffc107', ordre: 3 },
-        { code: 'EN_ATTENTE', libelle: 'En attente', couleur: '#6c757d', ordre: 4 },
-        { code: 'VALIDE', libelle: 'Validée', couleur: '#28a745', ordre: 5 },
-        { code: 'REFUSE', libelle: 'Refusée', couleur: '#dc3545', ordre: 6 },
-        { code: 'AUTRE', libelle: 'Autres', couleur: '#6c757d', ordre: 7 },
-        { code: 'ABANDONNE', libelle: 'Abandonné', couleur: '#6c757d', ordre: 8 },
-        { code: 'TERMINE', libelle: 'Terminé', couleur: '#28a745', ordre: 9 },
-        { code: 'ARCHIVE', libelle: 'Archivé', couleur: '#343a40', ordre: 10 }
+        { code: 'RECU', libelle: 'Reçu', couleur: '#87CEEB', ordre: 1 },           // bleu ciel
+        { code: 'A_TRAITER', libelle: 'À traiter', couleur: '#007bff', ordre: 2 }, // bleu
+        { code: 'INCOMPLET', libelle: 'Dossier incomplet', couleur: '#ffc107', ordre: 3 }, // jaune
+        { code: 'EN_ATTENTE', libelle: 'En attente', couleur: '#adb5bd', ordre: 4 }, // gris clair
+        { code: 'VALIDE', libelle: 'Validée', couleur: '#f8b4c4', ordre: 5 },      // rose
+        { code: 'EN_COURS', libelle: 'En cours', couleur: '#28a745', ordre: 6 },   // vert
+        { code: 'REFUSE', libelle: 'Refusée', couleur: '#dc3545', ordre: 7 },      // rouge
+        { code: 'RENVOYE', libelle: 'Renvoyé', couleur: '#fd7e14', ordre: 8 },     // orange
+        { code: 'ABANDONNE', libelle: 'Abandonné', couleur: '#ffffff', ordre: 9 }, // blanc
+        { code: 'TERMINE', libelle: 'Terminé', couleur: '#e83e8c', ordre: 10 },    // magenta
+        { code: 'ARCHIVE', libelle: 'Archivé', couleur: '#343a40', ordre: 11 }     // noir
     ];
 
     for (const statut of statuts) {

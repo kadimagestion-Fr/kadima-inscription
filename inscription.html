@@ -1,0 +1,1452 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Formulaire d'inscription au Programme Kadima - Yéshiva Yéchouot Yossef">
+    <title>Inscription Programme Kadima 2026-2027</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Heebo:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/design-system.css">
+
+    <style>
+        /* Styles spécifiques au formulaire */
+        .nationality-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            background: var(--color-secondary-light);
+            color: var(--color-gray-800);
+            border-radius: var(--radius-full);
+            font-size: var(--font-size-xs);
+            margin-left: var(--spacing-2);
+        }
+
+        .conditional-field {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .conditional-field.visible {
+            display: block;
+        }
+
+        .sibling-entry {
+            background: var(--color-gray-50);
+            padding: var(--spacing-4);
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--spacing-3);
+            position: relative;
+        }
+
+        .sibling-entry .remove-sibling {
+            position: absolute;
+            top: var(--spacing-2);
+            right: var(--spacing-2);
+            background: var(--color-error);
+            color: white;
+            border: none;
+            width: 24px;
+            height: 24px;
+            border-radius: var(--radius-full);
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .add-sibling-btn {
+            width: 100%;
+            padding: var(--spacing-3);
+            border: 2px dashed var(--color-gray-300);
+            background: transparent;
+            color: var(--color-gray-500);
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            font-family: inherit;
+            font-size: var(--font-size-sm);
+            transition: all var(--transition-fast);
+        }
+
+        .add-sibling-btn:hover {
+            border-color: var(--color-primary);
+            color: var(--color-primary);
+        }
+
+        .external-link-box {
+            background: linear-gradient(135deg, rgba(214, 158, 46, 0.1), rgba(214, 158, 46, 0.2));
+            border: 1px solid var(--color-secondary);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-4);
+            margin-bottom: var(--spacing-4);
+        }
+
+        .external-link-box h5 {
+            color: var(--color-secondary);
+            margin-bottom: var(--spacing-2);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-2);
+        }
+
+        .external-link-box a {
+            color: var(--color-primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .external-link-box a:hover {
+            text-decoration: underline;
+        }
+
+        .phone-input-group {
+            display: flex;
+            gap: var(--spacing-2);
+            align-items: center;
+        }
+
+        .indicatif-select {
+            width: auto;
+            min-width: 140px;
+            flex-shrink: 0;
+        }
+
+        .indicatif-autre {
+            width: 80px !important;
+            flex-shrink: 0;
+        }
+
+        .checkbox-item .required {
+            color: var(--color-error) !important;
+            font-weight: bold;
+        }
+
+        .tooltip-icon {
+            cursor: help;
+            margin-left: 4px;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="card">
+            <!-- Header -->
+            <div class="card-header" style="position: relative;">
+                <img src="images/logo-kadima.png" alt="Logo Kadima"
+                    style="position: absolute; top: 20px; right: 20px; width: 80px; height: auto; border-radius: 8px;">
+                <svg class="logo" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="50" cy="50" r="45" fill="#d69e2e" />
+                    <text x="50" y="38" text-anchor="middle" fill="white" font-size="14" font-weight="bold">קדימה</text>
+                    <text x="50" y="58" text-anchor="middle" fill="white" font-size="10">KADIMA</text>
+                    <text x="50" y="72" text-anchor="middle" fill="white" font-size="8">5787</text>
+                </svg>
+                <h1>Inscription Programme Kadima</h1>
+                <p>Yéshiva Yéchouot Yossef • Session 2026-2027</p>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="progress-container">
+                <div class="progress-steps">
+                    <div class="progress-line" id="progressLine"></div>
+                    <div class="step-indicator active" data-step="1"><span>1</span></div>
+                    <div class="step-indicator" data-step="2"><span>2</span></div>
+                    <div class="step-indicator" data-step="3"><span>3</span></div>
+                    <div class="step-indicator" data-step="4"><span>4</span></div>
+                    <div class="step-indicator" data-step="5"><span>5</span></div>
+                    <div class="step-indicator" data-step="6"><span>6</span></div>
+                    <div class="step-indicator" data-step="7"><span>7</span></div>
+                    <div class="step-indicator" data-step="8"><span>8</span></div>
+                </div>
+            </div>
+
+            <!-- Form Body -->
+            <div class="card-body">
+                <form id="inscriptionForm" novalidate>
+
+                    <!-- SECTION 1: Identité -->
+                    <div class="form-section active" data-section="1">
+                        <h3 class="section-title">
+                            <span class="icon">👤</span>
+                            Identité de l'étudiant
+                        </h3>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="nom">Nom <span class="required">*</span></label>
+                                <input type="text" id="nom" name="nom" class="form-control" required
+                                    placeholder="Votre nom de famille">
+                                <span class="error-message">Ce champ est obligatoire</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="prenom">Prénom <span class="required">*</span></label>
+                                <input type="text" id="prenom" name="prenom" class="form-control" required
+                                    placeholder="Votre prénom">
+                                <span class="error-message">Ce champ est obligatoire</span>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="dateNaissance">Date de naissance <span class="required">*</span></label>
+                                <input type="date" id="dateNaissance" name="dateNaissance" class="form-control"
+                                    required>
+                                <span class="error-message">Ce champ est obligatoire</span>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="paysNaissance">Pays de naissance <span class="required">*</span></label>
+                                <input type="text" id="paysNaissance" name="paysNaissance" class="form-control" required
+                                    placeholder="Ex: France">
+                                <span class="error-message">Ce champ est obligatoire</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="villeNaissance">Ville de naissance <span class="required">*</span></label>
+                                <input type="text" id="villeNaissance" name="villeNaissance" class="form-control"
+                                    required placeholder="Ex: Paris">
+                                <span class="error-message">Ce champ est obligatoire</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Email <span class="required">*</span></label>
+                            <input type="email" id="email" name="email" class="form-control" required
+                                placeholder="votre-email@exemple.com">
+                            <span class="error-message">Veuillez entrer un email valide</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="telephone">Téléphone portable <span class="required">*</span></label>
+                            <div class="form-row" style="margin-bottom: 0;">
+                                <div class="form-group" style="flex: 1; margin-bottom: 0;">
+                                    <select id="indicatifPays" name="indicatifPays" class="form-control">
+                                        <option value="+33">France (+33)</option>
+                                        <option value="+1">Canada (+1)</option>
+                                        <option value="+32">Belgique (+32)</option>
+                                        <option value="+41">Suisse (+41)</option>
+                                        <option value="+972">Israël (+972)</option>
+                                        <option value="+212">Maroc (+212)</option>
+                                        <option value="+216">Tunisie (+216)</option>
+                                        <option value="+44">Royaume-Uni (+44)</option>
+                                        <option value="+1-US">USA (+1)</option>
+                                        <option value="autre">Autre...</option>
+                                    </select>
+                                </div>
+                                <div class="form-group conditional-field" id="indicatifPaysAutreGroup"
+                                    style="flex: 0.5; margin-bottom: 0;">
+                                    <input type="text" id="indicatifPaysAutre" name="indicatifPaysAutre"
+                                        class="form-control" placeholder="Ex: +49">
+                                </div>
+                                <div class="form-group" style="flex: 1.5; margin-bottom: 0;">
+                                    <input type="tel" id="telephone" name="telephone" class="form-control" required
+                                        placeholder="6 12 34 56 78">
+                                </div>
+                            </div>
+                            <span class="error-message">Ce champ est obligatoire</span>
+                        </div>
+
+                        <h4 style="margin: var(--spacing-4) 0 var(--spacing-3); color: var(--color-gray-600);">Adresse
+                        </h4>
+
+                        <div class="form-group">
+                            <label for="adresse">Adresse <span class="required">*</span></label>
+                            <input type="text" id="adresse" name="adresse" class="form-control" required
+                                placeholder="Numéro et nom de rue">
+                            <span class="error-message">Ce champ est obligatoire</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="adresseComplement">Complément d'adresse</label>
+                            <input type="text" id="adresseComplement" name="adresseComplement" class="form-control"
+                                placeholder="Bâtiment, étage, appartement...">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="adresseLieuDit">Lieu-dit ou région</label>
+                            <input type="text" id="adresseLieuDit" name="adresseLieuDit" class="form-control"
+                                placeholder="Optionnel">
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="codePostal">Code postal <span class="required">*</span></label>
+                                <input type="text" id="codePostal" name="codePostal" class="form-control" required
+                                    placeholder="Ex: 75001">
+                                <span class="error-message">Ce champ est obligatoire</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="ville">Ville <span class="required">*</span></label>
+                                <input type="text" id="ville" name="ville" class="form-control" required
+                                    placeholder="Ex: Paris">
+                                <span class="error-message">Ce champ est obligatoire</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="pays">Pays <span class="required">*</span></label>
+                                <input type="text" id="pays" name="pays" class="form-control" required
+                                    placeholder="Ex: France">
+                                <span class="error-message">Ce champ est obligatoire</span>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="nationalite">Nationalité principale <span class="required">*</span></label>
+                                <select id="nationalite" name="nationalite" class="form-control" required>
+                                    <option value="">Sélectionnez...</option>
+                                    <option value="FR">Française</option>
+                                    <option value="CA">Canadienne</option>
+                                    <option value="BE">Belge</option>
+                                    <option value="CH">Suisse</option>
+                                    <option value="IL">Israélienne</option>
+                                    <option value="MA">Marocaine</option>
+                                    <option value="TN">Tunisienne</option>
+                                    <option value="autre">Autre</option>
+                                </select>
+                                <span class="error-message">Ce champ est obligatoire</span>
+                            </div>
+                            <div class="form-group conditional-field" id="autreNationaliteField">
+                                <label for="autreNationalite">Précisez votre nationalité <span
+                                        class="required">*</span></label>
+                                <input type="text" id="autreNationalite" name="autreNationalite" class="form-control"
+                                    placeholder="Ex: Américaine">
+                                <span class="error-message">Ce champ est obligatoire</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="numPasseport">Numéro de passeport <span class="required">*</span></label>
+                                <input type="text" id="numPasseport" name="numPasseport" class="form-control"
+                                    placeholder="XX123456" required>
+                                <span class="error-message">Ce champ est obligatoire</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Avez-vous la nationalité israélienne ?</label>
+                            <div class="radio-group">
+                                <div class="radio-item">
+                                    <input type="radio" id="natIsraelOui" name="nationaliteIsrael" value="oui">
+                                    <label for="natIsraelOui">Oui</label>
+                                </div>
+                                <div class="radio-item">
+                                    <input type="radio" id="natIsraelNon" name="nationaliteIsrael" value="non" checked>
+                                    <label for="natIsraelNon">Non</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="conditional-field" id="dateNatIsrael">
+                            <div class="form-group">
+                                <label for="dateObtentionIsrael">Date d'obtention de la nationalité israélienne</label>
+                                <input type="date" id="dateObtentionIsrael" name="dateObtentionIsrael"
+                                    class="form-control">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="situationFamiliale">Situation familiale</label>
+                                <select id="situationFamiliale" name="situationFamiliale" class="form-control">
+                                    <option value="celibataire">Célibataire</option>
+                                    <option value="fiance">Fiancé</option>
+                                    <option value="pacse">Pacsé</option>
+                                    <option value="marie">Marié</option>
+                                    <option value="divorce">Divorcé</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="profession">Profession actuelle</label>
+                                <input type="text" id="profession" name="profession" class="form-control"
+                                    placeholder="Étudiant, salarié...">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SECTION 2: Famille -->
+                    <div class="form-section" data-section="2">
+                        <h3 class="section-title">
+                            <span class="icon">👨‍👩‍👧‍👦</span>
+                            Informations familiales
+                        </h3>
+
+                        <!-- Statut d'autonomie -->
+                        <div class="form-group">
+                            <label>Statut de l'étudiant</label>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="autonome" name="autonome" value="oui">
+                                <label for="autonome">Étudiant autonome (vit de façon indépendante, sans représentant
+                                    légal)</label>
+                            </div>
+                        </div>
+
+                        <!-- Représentant légal 1 -->
+                        <div id="representant1Section">
+                            <div class="form-row" style="align-items: center; flex-wrap: wrap; gap: var(--spacing-2);">
+                                <h4
+                                    style="margin: var(--spacing-4) 0 var(--spacing-3); color: var(--color-gray-600); margin-right: var(--spacing-3);">
+                                    Représentant légal 1 (obligatoire)
+                                </h4>
+                                <span
+                                    style="color: var(--color-gray-500); font-size: 0.9em; margin-right: var(--spacing-2);">Type
+                                    <span class="required">*</span></span>
+                                <div class="radio-group" style="display: flex; gap: var(--spacing-4); flex-wrap: wrap;">
+                                    <div class="radio-item">
+                                        <input type="radio" id="rl1Pere" name="typeRL1" value="pere" checked>
+                                        <label for="rl1Pere">Père</label>
+                                    </div>
+                                    <div class="radio-item">
+                                        <input type="radio" id="rl1Mere" name="typeRL1" value="mere">
+                                        <label for="rl1Mere">Mère</label>
+                                    </div>
+                                    <div class="radio-item">
+                                        <input type="radio" id="rl1Tuteur" name="typeRL1" value="tuteur">
+                                        <label for="rl1Tuteur">Tuteur</label>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="nomRL1">Nom <span class="required">*</span></label>
+                                    <input type="text" id="nomRL1" name="nomRL1" class="form-control" required>
+                                    <span class="error-message">Ce champ est obligatoire</span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="prenomRL1">Prénom <span class="required">*</span></label>
+                                    <input type="text" id="prenomRL1" name="prenomRL1" class="form-control" required>
+                                    <span class="error-message">Ce champ est obligatoire</span>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="telRL1">Téléphone</label>
+                                    <div class="phone-input-group">
+                                        <select id="indicatifRL1" name="indicatifRL1"
+                                            class="form-control indicatif-select">
+                                            <option value="+33">France (+33)</option>
+                                            <option value="+1">Canada (+1)</option>
+                                            <option value="+32">Belgique (+32)</option>
+                                            <option value="+41">Suisse (+41)</option>
+                                            <option value="+972">Israël (+972)</option>
+                                            <option value="+212">Maroc (+212)</option>
+                                            <option value="+216">Tunisie (+216)</option>
+                                            <option value="+44">Royaume-Uni (+44)</option>
+                                            <option value="+1-US">USA (+1)</option>
+                                            <option value="autre">Autre...</option>
+                                        </select>
+                                        <input type="text" id="indicatifRL1Autre" name="indicatifRL1Autre"
+                                            class="form-control indicatif-autre" placeholder="+XX"
+                                            style="width: 70px; display: none;">
+                                        <input type="tel" id="telRL1" name="telRL1" class="form-control"
+                                            placeholder="6 12 34 56 78" style="flex: 1;">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="emailRL1">Email</label>
+                                    <input type="email" id="emailRL1" name="emailRL1" class="form-control"
+                                        placeholder="email@exemple.com">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="professionRL1">Profession</label>
+                                <input type="text" id="professionRL1" name="professionRL1" class="form-control">
+                            </div>
+
+                            <!-- Adresse RL1 -->
+                            <div class="checkbox-item" style="margin: var(--spacing-3) 0;">
+                                <input type="checkbox" id="memeAdresseRL1" name="memeAdresseRL1" value="oui" checked>
+                                <label for="memeAdresseRL1">Même adresse que l'étudiant</label>
+                            </div>
+
+                            <div class="conditional-field" id="adresseRL1Fields">
+                                <div class="form-group">
+                                    <label for="adresseRL1">Adresse</label>
+                                    <input type="text" id="adresseRL1" name="adresseRL1" class="form-control"
+                                        placeholder="Numéro et nom de rue">
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="adresseComplementRL1">Complément d'adresse</label>
+                                        <input type="text" id="adresseComplementRL1" name="adresseComplementRL1"
+                                            class="form-control" placeholder="Bâtiment, étage, appartement...">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="lieuDitRL1">Lieu-dit ou région</label>
+                                        <input type="text" id="lieuDitRL1" name="lieuDitRL1" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="codePostalRL1">Code postal</label>
+                                        <input type="text" id="codePostalRL1" name="codePostalRL1" class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="villeRL1">Ville</label>
+                                        <input type="text" id="villeRL1" name="villeRL1" class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="paysRL1">Pays</label>
+                                        <input type="text" id="paysRL1" name="paysRL1" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Représentant légal 2 (optionnel) -->
+                        <div id="representant2Section">
+                            <div class="form-row" style="align-items: center; flex-wrap: wrap; gap: var(--spacing-2);">
+                                <h4
+                                    style="margin: var(--spacing-6) 0 var(--spacing-3); color: var(--color-gray-600); margin-right: var(--spacing-3);">
+                                    Représentant légal 2 <span
+                                        style="font-weight: normal; font-size: 0.9em;">(optionnel)</span>
+                                </h4>
+                                <span
+                                    style="color: var(--color-gray-500); font-size: 0.9em; margin-right: var(--spacing-2);">Type</span>
+                                <div class="radio-group" style="display: flex; gap: var(--spacing-4); flex-wrap: wrap;">
+                                    <div class="radio-item">
+                                        <input type="radio" id="rl2Aucun" name="typeRL2" value="" checked>
+                                        <label for="rl2Aucun">Non renseigné</label>
+                                    </div>
+                                    <div class="radio-item">
+                                        <input type="radio" id="rl2Pere" name="typeRL2" value="pere">
+                                        <label for="rl2Pere">Père</label>
+                                    </div>
+                                    <div class="radio-item">
+                                        <input type="radio" id="rl2Mere" name="typeRL2" value="mere">
+                                        <label for="rl2Mere">Mère</label>
+                                    </div>
+                                    <div class="radio-item">
+                                        <input type="radio" id="rl2Tuteur" name="typeRL2" value="tuteur">
+                                        <label for="rl2Tuteur">Tuteur</label>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="conditional-field" id="rl2Fields">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="nomRL2">Nom</label>
+                                        <input type="text" id="nomRL2" name="nomRL2" class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="prenomRL2">Prénom</label>
+                                        <input type="text" id="prenomRL2" name="prenomRL2" class="form-control">
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="telRL2">Téléphone</label>
+                                        <div class="phone-input-group">
+                                            <select id="indicatifRL2" name="indicatifRL2"
+                                                class="form-control indicatif-select">
+                                                <option value="+33">France (+33)</option>
+                                                <option value="+1">Canada (+1)</option>
+                                                <option value="+32">Belgique (+32)</option>
+                                                <option value="+41">Suisse (+41)</option>
+                                                <option value="+972">Israël (+972)</option>
+                                                <option value="+212">Maroc (+212)</option>
+                                                <option value="+216">Tunisie (+216)</option>
+                                                <option value="+44">Royaume-Uni (+44)</option>
+                                                <option value="+1-US">USA (+1)</option>
+                                                <option value="autre">Autre...</option>
+                                            </select>
+                                            <input type="text" id="indicatifRL2Autre" name="indicatifRL2Autre"
+                                                class="form-control indicatif-autre" placeholder="+XX"
+                                                style="width: 70px; display: none;">
+                                            <input type="tel" id="telRL2" name="telRL2" class="form-control"
+                                                placeholder="6 12 34 56 78" style="flex: 1;">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="emailRL2">Email</label>
+                                        <input type="email" id="emailRL2" name="emailRL2" class="form-control"
+                                            placeholder="email@exemple.com">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="professionRL2">Profession</label>
+                                    <input type="text" id="professionRL2" name="professionRL2" class="form-control">
+                                </div>
+
+                                <!-- Adresse RL2 -->
+                                <div class="checkbox-item" style="margin: var(--spacing-3) 0;">
+                                    <input type="checkbox" id="memeAdresseRL2" name="memeAdresseRL2" value="oui"
+                                        checked>
+                                    <label for="memeAdresseRL2">Même adresse que l'étudiant</label>
+                                </div>
+
+                                <div class="conditional-field" id="adresseRL2Fields">
+                                    <div class="form-group">
+                                        <label for="adresseRL2">Adresse</label>
+                                        <input type="text" id="adresseRL2" name="adresseRL2" class="form-control"
+                                            placeholder="Numéro et nom de rue">
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="adresseComplementRL2">Complément d'adresse</label>
+                                            <input type="text" id="adresseComplementRL2" name="adresseComplementRL2"
+                                                class="form-control" placeholder="Bâtiment, étage, appartement...">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="lieuDitRL2">Lieu-dit ou région</label>
+                                            <input type="text" id="lieuDitRL2" name="lieuDitRL2" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="codePostalRL2">Code postal</label>
+                                            <input type="text" id="codePostalRL2" name="codePostalRL2"
+                                                class="form-control">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="villeRL2">Ville</label>
+                                            <input type="text" id="villeRL2" name="villeRL2" class="form-control">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="paysRL2">Pays</label>
+                                            <input type="text" id="paysRL2" name="paysRL2" class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h4 style="margin: var(--spacing-6) 0 var(--spacing-4); color: var(--color-gray-600);">Contact
+                            en Israël</h4>
+                        <div class="form-group">
+                            <label for="contactIsrael">Nom et adresse de parents ou proches en Israël</label>
+                            <textarea id="contactIsrael" name="contactIsrael" class="form-control"
+                                placeholder="Nom, lien de parenté, adresse, téléphone"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- SECTION 3: Situation financière -->
+                    <div class="form-section" data-section="3">
+                        <h3 class="section-title">
+                            <span class="icon">💶</span>
+                            Situation financière
+                        </h3>
+
+                        <div class="info-box">
+                            <p><strong>Pourquoi ces informations ?</strong> Ces données nous permettent d'évaluer votre
+                                situation et de vous proposer les aides adaptées. Elles restent strictement
+                                confidentielles.</p>
+                        </div>
+
+                        <!-- Foyer fiscal -->
+                        <h4 style="margin: var(--spacing-4) 0 var(--spacing-3); color: var(--color-gray-600);">
+                            📊 Foyer fiscal (des parents/représentants légaux)
+                        </h4>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="revenusMensuels">Revenus mensuels du foyer <span
+                                        class="required">*</span></label>
+                                <div style="display: flex; gap: var(--spacing-2);">
+                                    <input type="number" id="revenusMensuels" name="revenusMensuels"
+                                        class="form-control" placeholder="0" min="0" step="1" style="flex: 1;" required>
+                                    <select id="deviseRevenus" name="deviseRevenus" class="form-control"
+                                        style="width: 100px;">
+                                        <option value="EUR">€ EUR</option>
+                                        <option value="USD">$ USD</option>
+                                        <option value="CAD">$ CAD</option>
+                                        <option value="ILS">₪ ILS</option>
+                                    </select>
+                                </div>
+                                <span class="error-message">Ce champ est obligatoire</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="allocationsCaf">Allocations CAF (y compris APL) mensuelles</label>
+                                <input type="number" id="allocationsCaf" name="allocationsCaf" class="form-control"
+                                    placeholder="0" min="0" step="1">
+                                <span style="font-size: 0.85em; color: var(--color-gray-500);">En euros, arrondi à
+                                    l'unité</span>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="loyerMensuel">Loyer ou échéances de prêt immobilier (hors APL) <span
+                                        class="required">*</span></label>
+                                <input type="number" id="loyerMensuel" name="loyerMensuel" class="form-control"
+                                    placeholder="0" min="0" step="1" required>
+                                <span style="font-size: 0.85em; color: var(--color-gray-500);">Par mois, en euros</span>
+                                <span class="error-message">Ce champ est obligatoire</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="nbPersonnesFoyer">Nombre de personnes au foyer <span
+                                        class="required">*</span></label>
+                                <input type="number" id="nbPersonnesFoyer" name="nbPersonnesFoyer" class="form-control"
+                                    min="1" max="20" value="1" required>
+                                <span class="error-message">Ce champ est obligatoire</span>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="nbEnfantsCharge">Nombre d'enfants à charge <span
+                                        class="required">*</span></label>
+                                <input type="number" id="nbEnfantsCharge" name="nbEnfantsCharge" class="form-control"
+                                    min="0" max="15" value="0" required>
+                                <span class="error-message">Ce champ est obligatoire</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="quotientFamilial">Quotient familial CAF <span class="tooltip-icon"
+                                        title="Le quotient familial figure sur votre attestation CAF">ℹ️</span></label>
+                                <input type="number" id="quotientFamilial" name="quotientFamilial" class="form-control"
+                                    placeholder="Ex: 850" min="0" step="1">
+                            </div>
+                        </div>
+
+                        <!-- Situation de l'étudiant -->
+                        <h4 style="margin: var(--spacing-6) 0 var(--spacing-3); color: var(--color-gray-600);">
+                            🎓 Situation financière de l'étudiant
+                        </h4>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="coutScolaritePrecedente">Coût mensuel de la dernière scolarité</label>
+                                <div style="display: flex; gap: var(--spacing-2);">
+                                    <input type="number" id="coutScolaritePrecedente" name="coutScolaritePrecedente"
+                                        class="form-control" placeholder="0" min="0" style="flex: 1;">
+                                    <select id="deviseScolarite" name="deviseScolarite" class="form-control"
+                                        style="width: 100px;">
+                                        <option value="EUR">€ EUR</option>
+                                        <option value="USD">$ USD</option>
+                                        <option value="CAD">$ CAD</option>
+                                        <option value="ILS">₪ ILS</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="participationPossible">Participation mensuelle possible pour Kadima <span
+                                        class="required">*</span></label>
+                                <div style="display: flex; gap: var(--spacing-2);">
+                                    <input type="number" id="participationPossible" name="participationPossible"
+                                        class="form-control" placeholder="0" min="0" step="1" style="flex: 1;" required>
+                                    <select id="deviseParticipation" name="deviseParticipation" class="form-control"
+                                        style="width: 100px;">
+                                        <option value="EUR">€ EUR</option>
+                                        <option value="USD">$ USD</option>
+                                        <option value="CAD">$ CAD</option>
+                                        <option value="ILS">₪ ILS</option>
+                                    </select>
+                                </div>
+                                <span class="error-message">Ce champ est obligatoire</span>
+                            </div>
+                        </div>
+
+                        <!-- Bourse CROUS -->
+                        <div class="form-group">
+                            <label>Bénéficiez-vous de la bourse CROUS ?</label>
+                            <div class="radio-group">
+                                <div class="radio-item">
+                                    <input type="radio" id="crousOui" name="bourseCrous" value="oui">
+                                    <label for="crousOui">Oui</label>
+                                </div>
+                                <div class="radio-item">
+                                    <input type="radio" id="crousNon" name="bourseCrous" value="non" checked>
+                                    <label for="crousNon">Non</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="conditional-field" id="crousFields">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="crousEchelon">Échelon CROUS</label>
+                                    <select id="crousEchelon" name="crousEchelon" class="form-control">
+                                        <option value="">Sélectionnez...</option>
+                                        <option value="0bis">Échelon 0 bis</option>
+                                        <option value="1">Échelon 1</option>
+                                        <option value="2">Échelon 2</option>
+                                        <option value="3">Échelon 3</option>
+                                        <option value="4">Échelon 4</option>
+                                        <option value="5">Échelon 5</option>
+                                        <option value="6">Échelon 6</option>
+                                        <option value="7">Échelon 7</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="crousMontant">Montant mensuel perçu (€)</label>
+                                    <input type="number" id="crousMontant" name="crousMontant" class="form-control"
+                                        placeholder="Ex: 450" min="0">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Autres bourses -->
+                        <div class="form-group">
+                            <label for="autresBourses">Autres aides ou bourses perçues</label>
+                            <textarea id="autresBourses" name="autresBourses" class="form-control"
+                                placeholder="Précisez le nom et le montant des autres aides (ex: bourse régionale, aide au mérite...)"></textarea>
+                        </div>
+
+                        <!-- Travail de l'étudiant -->
+                        <div class="form-group">
+                            <label>L'étudiant travaille-t-il actuellement ?</label>
+                            <div class="radio-group">
+                                <div class="radio-item">
+                                    <input type="radio" id="travailOui" name="etudiantTravaille" value="oui">
+                                    <label for="travailOui">Oui</label>
+                                </div>
+                                <div class="radio-item">
+                                    <input type="radio" id="travailNon" name="etudiantTravaille" value="non" checked>
+                                    <label for="travailNon">Non</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="conditional-field" id="travailFields">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="travailType">Type d'emploi</label>
+                                    <input type="text" id="travailType" name="travailType" class="form-control"
+                                        placeholder="Ex: Job étudiant, CDI temps partiel...">
+                                </div>
+                                <div class="form-group">
+                                    <label for="travailRevenu">Revenu mensuel net</label>
+                                    <div style="display: flex; gap: var(--spacing-2);">
+                                        <input type="number" id="travailRevenu" name="travailRevenu"
+                                            class="form-control" placeholder="0" min="0" step="1" style="flex: 1;">
+                                        <select id="deviseTravail" name="deviseTravail" class="form-control"
+                                            style="width: 100px;">
+                                            <option value="EUR">€ EUR</option>
+                                            <option value="USD">$ USD</option>
+                                            <option value="CAD">$ CAD</option>
+                                            <option value="ILS">₪ ILS</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SECTION 4: Parcours -->
+                    <div class="form-section" data-section="4">
+                        <h3 class="section-title">
+                            <span class="icon">🎓</span>
+                            Parcours scolaire et activités
+                        </h3>
+
+                        <h4 style="margin-bottom: var(--spacing-4); color: var(--color-gray-600);">Études</h4>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="baccalaureat">Baccalauréat <span class="required">*</span></label>
+                                <select id="baccalaureat" name="baccalaureat" class="form-control" required>
+                                    <option value="">Sélectionnez...</option>
+                                    <option value="en_cours">En cours</option>
+                                    <option value="non_obtenu">Non obtenu</option>
+                                    <option value="general">Général</option>
+                                    <option value="techno">Technologique</option>
+                                    <option value="pro">Professionnel</option>
+                                    <option value="equiv">Équivalent étranger</option>
+                                </select>
+                                <span class="error-message">Ce champ est obligatoire</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="nomEcole">Nom de l'école/université</label>
+                                <input type="text" id="nomEcole" name="nomEcole" class="form-control"
+                                    placeholder="Si études supérieures">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="diplomeObtenu">Dernier diplôme obtenu</label>
+                            <input type="text" id="diplomeObtenu" name="diplomeObtenu" class="form-control"
+                                placeholder="Licence, Master, etc.">
+                        </div>
+
+                        <h4 style="margin: var(--spacing-6) 0 var(--spacing-4); color: var(--color-gray-600);">Niveau
+                            d'hébreu</h4>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="hebreuOral">Oral</label>
+                                <select id="hebreuOral" name="hebreuOral" class="form-control">
+                                    <option value="0">Aucun</option>
+                                    <option value="1">Débutant</option>
+                                    <option value="2">Intermédiaire</option>
+                                    <option value="3">Courant</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="hebreuLecture">Lecture</label>
+                                <select id="hebreuLecture" name="hebreuLecture" class="form-control">
+                                    <option value="0">Aucun</option>
+                                    <option value="1">Débutant</option>
+                                    <option value="2">Intermédiaire</option>
+                                    <option value="3">Courant</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="hebreuEcrit">Écrit</label>
+                                <select id="hebreuEcrit" name="hebreuEcrit" class="form-control">
+                                    <option value="0">Aucun</option>
+                                    <option value="1">Débutant</option>
+                                    <option value="2">Intermédiaire</option>
+                                    <option value="3">Courant</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <h4 style="margin: var(--spacing-6) 0 var(--spacing-4); color: var(--color-gray-600);">Activités
+                            et centres d'intérêt</h4>
+                        <div class="form-group">
+                            <label for="mouvementJeunesse">Mouvement de jeunesse</label>
+                            <input type="text" id="mouvementJeunesse" name="mouvementJeunesse" class="form-control"
+                                placeholder="EEIF, Bnei Akiva, etc.">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="sports">Sports</label>
+                                <input type="text" id="sports" name="sports" class="form-control"
+                                    placeholder="Football, tennis, etc.">
+                            </div>
+                            <div class="form-group">
+                                <label for="musique">Musique / Instruments</label>
+                                <input type="text" id="musique" name="musique" class="form-control"
+                                    placeholder="Piano, guitare, etc.">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="autresActivites">Autres activités</label>
+                            <textarea id="autresActivites" name="autresActivites" class="form-control"
+                                placeholder="Bénévolat, hobbies, etc."></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="commentConnuKadima">Comment avez-vous connu Kadima ? <span
+                                    class="required">*</span></label>
+                            <select id="commentConnuKadima" name="commentConnuKadima" class="form-control" required>
+                                <option value="">Sélectionnez...</option>
+                                <option value="salon">Salon étudiant</option>
+                                <option value="bouche-a-oreille">Bouche-à-oreille</option>
+                                <option value="internet">Site internet / Réseaux sociaux</option>
+                                <option value="rabbin">Recommandation d'un rabbin</option>
+                                <option value="ancien">Ancien étudiant</option>
+                                <option value="autre">Autre</option>
+                            </select>
+                            <span class="error-message">Ce champ est obligatoire</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="projetsApres">Projets après Kadima</label>
+                            <textarea id="projetsApres" name="projetsApres" class="form-control"
+                                placeholder="Alya, études en Israël, retour en France..."></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Intéressé par les psychométriques ?</label>
+                            <div class="radio-group">
+                                <div class="radio-item">
+                                    <input type="radio" id="psychoOui" name="psychometriques" value="oui">
+                                    <label for="psychoOui">Oui</label>
+                                </div>
+                                <div class="radio-item">
+                                    <input type="radio" id="psychoNon" name="psychometriques" value="non" checked>
+                                    <label for="psychoNon">Non</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SECTION 5: Bourses -->
+                    <div class="form-section" data-section="5">
+                        <h3 class="section-title">
+                            <span class="icon">💰</span>
+                            Demandes de bourses
+                        </h3>
+
+                        <div class="info-box">
+                            <p><strong>Information :</strong> Plusieurs bourses sont disponibles pour financer vos
+                                études.
+                                La bourse COBY est gérée directement via ce formulaire. Pour les bourses MASSA et TEVMI,
+                                vous serez redirigé vers les sites officiels.</p>
+                        </div>
+
+                        <!-- Bourse COBY -->
+                        <div
+                            style="background: var(--color-gray-50); padding: var(--spacing-4); border-radius: var(--radius-lg); margin-bottom: var(--spacing-4);">
+                            <h4 style="color: var(--color-primary); margin-bottom: var(--spacing-3);">
+                                🎯 Bourse COBY (Comité des Œuvres de Bienfaisance de la communauté Yéhouda)
+                            </h4>
+                            <div class="form-group">
+                                <label>Souhaitez-vous demander la bourse COBY ?</label>
+                                <div class="radio-group">
+                                    <div class="radio-item">
+                                        <input type="radio" id="cobyOui" name="demandeCoby" value="oui">
+                                        <label for="cobyOui">Oui, je souhaite faire une demande</label>
+                                    </div>
+                                    <div class="radio-item">
+                                        <input type="radio" id="cobyNon" name="demandeCoby" value="non" checked>
+                                        <label for="cobyNon">Non</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="conditional-field" id="cobyFields">
+                                <div class="info-box"
+                                    style="background: rgba(56, 161, 105, 0.1); border-left-color: var(--color-success);">
+                                    <p>La bourse COBY nécessite de fournir une attestation CAF de moins de 3 mois
+                                        (section Documents). Le montant sera déterminé en fonction de vos ressources.
+                                    </p>
+                                </div>
+                                <div class="form-group">
+                                    <label for="cobyMotivation">Motivation pour la demande COBY</label>
+                                    <textarea id="cobyMotivation" name="cobyMotivation" class="form-control"
+                                        placeholder="Expliquez brièvement votre situation et pourquoi vous sollicitez cette aide"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Bourse MASSA -->
+                        <div class="external-link-box">
+                            <h5>🌍 Bourse MASSA</h5>
+                            <p
+                                style="font-size: var(--font-size-sm); color: var(--color-gray-600); margin-bottom: var(--spacing-3);">
+                                Programme d'aide aux jeunes Juifs de 18 à 30 ans souhaitant effectuer un séjour prolongé
+                                en Israël.
+                            </p>
+                            <a href="massa.html" target="_blank" rel="noopener"
+                                style="display: inline-block; background: linear-gradient(135deg, #3182ce 0%, #2c5282 100%); color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: transform 0.2s, box-shadow 0.2s;">
+                                🌍 Faire ma demande MASSA →
+                            </a>
+
+                            <div style="margin-top: var(--spacing-3);">
+                                <div class="form-group">
+                                    <label>Avez-vous fait une demande MASSA ?</label>
+                                    <div class="radio-group">
+                                        <div class="radio-item">
+                                            <input type="radio" id="massaOui" name="demandeMassa" value="oui">
+                                            <label for="massaOui">Oui</label>
+                                        </div>
+                                        <div class="radio-item">
+                                            <input type="radio" id="massaNon" name="demandeMassa" value="non" checked>
+                                            <label for="massaNon">Non / Pas encore</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="conditional-field" id="massaFields">
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="massaNumero">Numéro de dossier MASSA</label>
+                                            <input type="text" id="massaNumero" name="massaNumero" class="form-control"
+                                                placeholder="Ex: MASSA-2026-XXXXX">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="massaStatut">Statut de la demande</label>
+                                            <select id="massaStatut" name="massaStatut" class="form-control">
+                                                <option value="en_cours">En cours</option>
+                                                <option value="acceptee">Acceptée</option>
+                                                <option value="refusee">Refusée</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="massaCommentaire">Commentaire (optionnel)</label>
+                                        <input type="text" id="massaCommentaire" name="massaCommentaire"
+                                            class="form-control" placeholder="Informations complémentaires">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Bourse TEVMI -->
+                        <div class="external-link-box">
+                            <h5>📚 Bourse TEVMI</h5>
+                            <p
+                                style="font-size: var(--font-size-sm); color: var(--color-gray-600); margin-bottom: var(--spacing-3);">
+                                Bourse financière de mobilité internationale attribuée par l'association française
+                                Transmission & Valeurs. Elle ne concerne que des élèves de nationalité française et
+                                résidant en France.
+                            </p>
+                            <a href="https://form.jotform.com/253134471672456" target="_blank" rel="noopener"
+                                style="display: inline-block; background: linear-gradient(135deg, #38a169 0%, #276749 100%); color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: transform 0.2s, box-shadow 0.2s;">
+                                📚 Faire ma demande TEVMI →
+                            </a>
+
+                            <div style="margin-top: var(--spacing-3);">
+                                <div class="form-group">
+                                    <label>Avez-vous fait une demande TEVMI ?</label>
+                                    <div class="radio-group">
+                                        <div class="radio-item">
+                                            <input type="radio" id="tevmiOui" name="demandeTevmi" value="oui">
+                                            <label for="tevmiOui">Oui</label>
+                                        </div>
+                                        <div class="radio-item">
+                                            <input type="radio" id="tevmiNon" name="demandeTevmi" value="non" checked>
+                                            <label for="tevmiNon">Non / Pas encore</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="conditional-field" id="tevmiFields">
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="tevmiNumero">Numéro de dossier TEVMI</label>
+                                            <input type="text" id="tevmiNumero" name="tevmiNumero" class="form-control"
+                                                placeholder="Ex: TEVMI-XXXXX">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="tevmiStatut">Statut de la demande</label>
+                                            <select id="tevmiStatut" name="tevmiStatut" class="form-control">
+                                                <option value="en_cours">En cours</option>
+                                                <option value="acceptee">Acceptée</option>
+                                                <option value="refusee">Refusée</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="tevmiCommentaire">Commentaire (optionnel)</label>
+                                        <input type="text" id="tevmiCommentaire" name="tevmiCommentaire"
+                                            class="form-control" placeholder="Informations complémentaires">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SECTION 5: Documents -->
+                    <div class="form-section" data-section="6">
+                        <h3 class="section-title">
+                            <span class="icon">📄</span>
+                            Documents à fournir
+                        </h3>
+
+                        <div class="info-box">
+                            <p><strong>Formats acceptés :</strong> PDF, JPG, PNG (max 5 Mo par fichier)</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Certificat de judaïsme (Kétouba des parents) <span class="required">*</span></label>
+                            <div class="file-upload" data-field="certificatJudaisme">
+                                <input type="file" id="certificatJudaisme" name="certificatJudaisme"
+                                    accept=".pdf,.jpg,.jpeg,.png" required>
+                                <div class="upload-icon">📜</div>
+                                <div class="upload-text">Cliquez ou glissez-déposez votre fichier ici</div>
+                                <div class="upload-hint">PDF, JPG ou PNG • Max 5 Mo</div>
+                            </div>
+                            <div class="file-preview" id="preview-certificatJudaisme" style="display: none;">
+                                <span class="file-name"></span>
+                                <span class="remove-file" data-field="certificatJudaisme">✕</span>
+                            </div>
+                            <span class="error-message">Ce document est obligatoire</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Extrait de naissance <span class="required">*</span></label>
+                            <div class="file-upload" data-field="extraitNaissance">
+                                <input type="file" id="extraitNaissance" name="extraitNaissance"
+                                    accept=".pdf,.jpg,.jpeg,.png" required>
+                                <div class="upload-icon">📋</div>
+                                <div class="upload-text">Cliquez ou glissez-déposez votre fichier ici</div>
+                                <div class="upload-hint">PDF, JPG ou PNG • Max 5 Mo</div>
+                            </div>
+                            <div class="file-preview" id="preview-extraitNaissance" style="display: none;">
+                                <span class="file-name"></span>
+                                <span class="remove-file" data-field="extraitNaissance">✕</span>
+                            </div>
+                            <span class="error-message">Ce document est obligatoire</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Photo d'identité <span class="required">*</span></label>
+                            <div class="file-upload" data-field="photoIdentite">
+                                <input type="file" id="photoIdentite" name="photoIdentite" accept=".jpg,.jpeg,.png"
+                                    required>
+                                <div class="upload-icon">📷</div>
+                                <div class="upload-text">Cliquez ou glissez-déposez votre photo</div>
+                                <div class="upload-hint">JPG ou PNG • Max 2 Mo • Format passeport</div>
+                            </div>
+                            <div class="file-preview" id="preview-photoIdentite" style="display: none;">
+                                <span class="file-name"></span>
+                                <span class="remove-file" data-field="photoIdentite">✕</span>
+                            </div>
+                            <span class="error-message">Ce document est obligatoire</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label>
+                                Attestation ou relevé de compte CAF (de moins de 3 mois) <span class="required">*</span>
+                                <span class="tooltip-icon"
+                                    title="Si vous ne percevez aucune allocation CAF, fournissez une attestation sur l'honneur de non-perception.">ℹ️</span>
+                            </label>
+                            <div class="file-upload" data-field="attestationCaf">
+                                <input type="file" id="attestationCaf" name="attestationCaf"
+                                    accept=".pdf,.jpg,.jpeg,.png" required>
+                                <div class="upload-icon">🏛️</div>
+                                <div class="upload-text">Cliquez ou glissez-déposez votre attestation</div>
+                                <div class="upload-hint">PDF, JPG ou PNG • Max 5 Mo • De moins de 3 mois</div>
+                            </div>
+                            <div class="file-preview" id="preview-attestationCaf" style="display: none;">
+                                <span class="file-name"></span>
+                                <span class="remove-file" data-field="attestationCaf">✕</span>
+                            </div>
+                            <span class="error-message">Ce document est obligatoire</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Copie du passeport</label>
+                            <div class="file-upload" data-field="copiePasseport">
+                                <input type="file" id="copiePasseport" name="copiePasseport"
+                                    accept=".pdf,.jpg,.jpeg,.png">
+                                <div class="upload-icon">🛂</div>
+                                <div class="upload-text">Cliquez ou glissez-déposez votre document</div>
+                                <div class="upload-hint">PDF, JPG ou PNG • Max 5 Mo</div>
+                            </div>
+                            <div class="file-preview" id="preview-copiePasseport" style="display: none;">
+                                <span class="file-name"></span>
+                                <span class="remove-file" data-field="copiePasseport">✕</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Visa Israël</label>
+                            <div class="file-upload" data-field="visaIsrael">
+                                <input type="file" id="visaIsrael" name="visaIsrael" accept=".pdf,.jpg,.jpeg,.png">
+                                <div class="upload-icon">✈️</div>
+                                <div class="upload-text">Cliquez ou glissez-déposez votre visa</div>
+                                <div class="upload-hint">PDF, JPG ou PNG • Max 5 Mo • Optionnel</div>
+                            </div>
+                            <div class="file-preview" id="preview-visaIsrael" style="display: none;">
+                                <span class="file-name"></span>
+                                <span class="remove-file" data-field="visaIsrael">✕</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SECTION 6: Médical -->
+                    <div class="form-section" data-section="7">
+                        <h3 class="section-title">
+                            <span class="icon">🏥</span>
+                            Informations médicales
+                        </h3>
+
+                        <div class="info-box"
+                            style="background: rgba(237, 137, 54, 0.1); border-left-color: var(--color-warning);">
+                            <p><strong>Confidentialité :</strong> Ces informations sont strictement confidentielles et
+                                ne seront utilisées
+                                que pour assurer votre bien-être durant votre séjour.</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Avez-vous des allergies ?</label>
+                            <div class="radio-group">
+                                <div class="radio-item">
+                                    <input type="radio" id="allergiesOui" name="allergies" value="oui">
+                                    <label for="allergiesOui">Oui</label>
+                                </div>
+                                <div class="radio-item">
+                                    <input type="radio" id="allergiesNon" name="allergies" value="non" checked>
+                                    <label for="allergiesNon">Non</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="conditional-field" id="allergiesDetails">
+                            <div class="form-group">
+                                <label for="allergiesPrecisions">Précisez vos allergies <span
+                                        class="required">*</span></label>
+                                <textarea id="allergiesPrecisions" name="allergiesPrecisions" class="form-control"
+                                    placeholder="Type d'allergie, gravité, traitement si nécessaire"></textarea>
+                                <span class="error-message">Ce champ est obligatoire si vous avez des allergies</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Êtes-vous sous traitement médical en cours ?</label>
+                            <div class="radio-group">
+                                <div class="radio-item">
+                                    <input type="radio" id="traitementOui" name="traitementMedical" value="oui">
+                                    <label for="traitementOui">Oui</label>
+                                </div>
+                                <div class="radio-item">
+                                    <input type="radio" id="traitementNon" name="traitementMedical" value="non" checked>
+                                    <label for="traitementNon">Non</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="conditional-field" id="traitementDetails">
+                            <div class="form-group">
+                                <label for="traitementPrecisions">Précisez votre traitement <span
+                                        class="required">*</span></label>
+                                <textarea id="traitementPrecisions" name="traitementPrecisions" class="form-control"
+                                    placeholder="Médicaments, posologie, durée du traitement"></textarea>
+                                <span class="error-message">Ce champ est obligatoire si vous avez un traitement</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Avez-vous déjà été suivi pour un trouble psychiatrique ?</label>
+                            <p
+                                style="font-size: var(--font-size-xs); color: var(--color-gray-500); margin-bottom: var(--spacing-2);">
+                                (dépression, anxiété, trouble du comportement, etc.)
+                            </p>
+                            <div class="radio-group">
+                                <div class="radio-item">
+                                    <input type="radio" id="psy" name="suiviPsy" value="oui">
+                                    <label for="psyOui">Oui</label>
+                                </div>
+                                <div class="radio-item">
+                                    <input type="radio" id="psyNon" name="suiviPsy" value="non" checked>
+                                    <label for="psyNon">Non</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="conditional-field" id="psyDetails">
+                            <div class="form-group">
+                                <label for="psyPrecisions">Précisez <span class="required">*</span></label>
+                                <textarea id="psyPrecisions" name="psyPrecisions" class="form-control"
+                                    placeholder="Nature du trouble, durée du suivi, médicaments éventuels, situation actuelle"></textarea>
+                                <span class="error-message">Ce champ est obligatoire si vous avez un suivi</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SECTION 7: Validation -->
+                    <div class="form-section" data-section="8">
+                        <h3 class="section-title">
+                            <span class="icon">✅</span>
+                            Validation de l'inscription
+                        </h3>
+
+                        <h4 style="margin-bottom: var(--spacing-4);">Récapitulatif de votre inscription</h4>
+
+                        <div class="summary-section">
+                            <h4>👤 Identité</h4>
+                            <div class="summary-item">
+                                <span class="label">Nom complet</span>
+                                <span class="value" id="summary-nom"></span>
+                            </div>
+                            <div class="summary-item">
+                                <span class="label">Date de naissance</span>
+                                <span class="value" id="summary-dateNaissance"></span>
+                            </div>
+                            <div class="summary-item">
+                                <span class="label">Email</span>
+                                <span class="value" id="summary-email"></span>
+                            </div>
+                            <div class="summary-item">
+                                <span class="label">Téléphone</span>
+                                <span class="value" id="summary-telephone"></span>
+                            </div>
+                        </div>
+
+                        <div class="summary-section">
+                            <h4>💰 Bourses demandées</h4>
+                            <div class="summary-item">
+                                <span class="label">COBY</span>
+                                <span class="value" id="summary-coby"></span>
+                            </div>
+                            <div class="summary-item">
+                                <span class="label">MASSA</span>
+                                <span class="value" id="summary-massa"></span>
+                            </div>
+                            <div class="summary-item">
+                                <span class="label">TEVMI</span>
+                                <span class="value" id="summary-tevmi"></span>
+                            </div>
+                        </div>
+
+                        <div class="summary-section">
+                            <h4>📄 Documents fournis</h4>
+                            <div id="summary-documents"></div>
+                        </div>
+
+                        <div style="margin-top: var(--spacing-6);">
+                            <div class="checkbox-item" style="margin-bottom: var(--spacing-3);">
+                                <input type="checkbox" id="acceptConditions" name="acceptConditions" required>
+                                <label for="acceptConditions">
+                                    J'ai lu et j'accepte les conditions d'inscription au Programme Kadima et
+                                    le règlement intérieur de la Yéshiva Yéchouot Yossef. <span
+                                        class="required">*</span>
+                                </label>
+                            </div>
+
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="acceptDonnees" name="acceptDonnees" required>
+                                <label for="acceptDonnees">
+                                    J'autorise le traitement de mes données personnelles conformément au RGPD,
+                                    dans le cadre exclusif de mon inscription. <span class="required">*</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-row" style="margin-top: var(--spacing-6);">
+                            <div class="form-group">
+                                <label for="signatureNom">Nom et prénom du responsable légal (ou de l'étudiant si
+                                    majeur) <span class="required">*</span></label>
+                                <input type="text" id="signatureNom" name="signatureNom" class="form-control" required
+                                    placeholder="Prénom NOM">
+                                <span class="error-message">Ce champ est obligatoire</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="signatureDate">Date <span class="required">*</span></label>
+                                <input type="date" id="signatureDate" name="signatureDate" class="form-control"
+                                    required>
+                                <span class="error-message">Ce champ est obligatoire</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Success Message (hidden by default) -->
+                    <div class="form-section" data-section="success" style="display: none;">
+                        <div class="success-message">
+                            <div class="success-icon">✓</div>
+                            <h2>Inscription envoyée avec succès !</h2>
+                            <p>
+                                Merci pour votre inscription au Programme Kadima 2026-2027.<br><br>
+                                Vous recevrez un email de confirmation à l'adresse indiquée.<br>
+                                Notre équipe vous contactera prochainement pour la suite des démarches.
+                            </p>
+                            <p style="margin-top: var(--spacing-6); color: var(--color-secondary); font-weight: 600;">
+                                בהצלחה ! Bonne chance dans vos études !
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Navigation -->
+                    <div class="form-navigation" id="formNavigation">
+                        <button type="button" class="btn btn-secondary" id="prevBtn" style="visibility: hidden;">
+                            ← Précédent
+                        </button>
+                        <button type="button" class="btn btn-primary" id="nextBtn">
+                            Suivant →
+                        </button>
+                        <button type="submit" class="btn btn-success btn-lg" id="submitBtn" style="display: none;">
+                            ✓ Valider mon inscription
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <p
+            style="text-align: center; color: rgba(255,255,255,0.7); margin-top: var(--spacing-4); font-size: var(--font-size-sm);">
+            © 2026 Yéshiva Kadima - Yéchouot Yossef • Tous droits réservés
+            <br>
+            <a href="mailto:kadima.gestion@gmail.com" style="color: rgba(255,255,255,0.9); text-decoration: none;">
+                📧 kadima.gestion@gmail.com
+            </a>
+        </p>
+    </div>
+
+    <script src="js/inscription.js"></script>
+</body>
+
+</html>
