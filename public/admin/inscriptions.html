@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscriptions | Kadima Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+
+<body>
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <img src="../images/logo-kadima.png" alt="Kadima" class="sidebar-logo">
+                <div>
+                    <div class="sidebar-title">Kadima</div>
+                    <div class="sidebar-subtitle">Session 2026-2027</div>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Principal</div>
+                    <a href="dashboard.html" class="nav-item">
+                        <span class="nav-item-icon">📊</span>
+                        <span class="nav-item-text">Tableau de bord</span>
+                    </a>
+                    <a href="inscriptions.html" class="nav-item active">
+                        <span class="nav-item-icon">📋</span>
+                        <span class="nav-item-text">Inscriptions</span>
+                    </a>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">Gestion</div>
+                    <a href="bourses.html" class="nav-item">
+                        <span class="nav-item-icon">🎓</span>
+                        <span class="nav-item-text">Bourses</span>
+                    </a>
+                    <a href="paiements.html" class="nav-item">
+                        <span class="nav-item-icon">💳</span>
+                        <span class="nav-item-text">Paiements</span>
+                    </a>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">Administration</div>
+                    <a href="utilisateurs.html" class="nav-item">
+                        <span class="nav-item-icon">👥</span>
+                        <span class="nav-item-text">Utilisateurs</span>
+                    </a>
+                </div>
+            </nav>
+            <div style="padding: var(--spacing-4); border-top: 1px solid rgba(255,255,255,0.1);">
+                <a href="#" class="nav-item" onclick="logout()">
+                    <span class="nav-item-icon">🚪</span>
+                    <span class="nav-item-text">Déconnexion</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main content -->
+        <main class="admin-main">
+            <header class="header">
+                <div class="header-left">
+                    <h1 class="header-title">Inscriptions</h1>
+                </div>
+                <div class="header-right">
+                    <div class="user-menu">
+                        <div class="user-avatar" id="userAvatar">GK</div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="admin-content">
+                <!-- Filtres -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div style="display: flex; gap: var(--spacing-4); flex-wrap: wrap; align-items: flex-end;">
+                            <div class="form-group" style="flex: 1; min-width: 200px; margin-bottom: 0;">
+                                <label class="form-label">Rechercher</label>
+                                <input type="text" class="form-control" id="searchInput"
+                                    placeholder="NIU, nom, email...">
+                            </div>
+                            <div class="form-group" style="min-width: 150px; margin-bottom: 0;">
+                                <label class="form-label">Statut</label>
+                                <select class="form-control" id="statutFilter">
+                                    <option value="">Tous les statuts</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="min-width: 150px; margin-bottom: 0;">
+                                <label class="form-label">Session</label>
+                                <select class="form-control" id="sessionFilter">
+                                    <option value="">Toutes</option>
+                                    <option value="2026-2027" selected>2026-2027</option>
+                                    <option value="2025-2026">2025-2026</option>
+                                </select>
+                            </div>
+                            <button class="btn btn-primary" onclick="loadInscriptions()">Filtrer</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Liste -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Liste des inscriptions</h3>
+                        <span class="badge badge-en-attente" id="totalCount">0</span>
+                    </div>
+                    <div class="card-body" style="padding: 0;">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>NIU</th>
+                                    <th>Nom</th>
+                                    <th>Prénom</th>
+                                    <th>Email</th>
+                                    <th>Statut</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="inscriptionsTable">
+                                <tr>
+                                    <td colspan="7" style="text-align: center; padding: var(--spacing-6);">
+                                        Chargement...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="card-footer"
+                        style="display: flex; justify-content: space-between; align-items: center;">
+                        <span id="paginationInfo">-</span>
+                        <div style="display: flex; gap: var(--spacing-2);">
+                            <button class="btn btn-secondary btn-sm" id="prevBtn" onclick="prevPage()" disabled>←
+                                Précédent</button>
+                            <button class="btn btn-secondary btn-sm" id="nextBtn" onclick="nextPage()">Suivant
+                                →</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal déconnexion -->
+    <div class="modal-overlay" id="logoutModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Confirmer la déconnexion</h3>
+                <span class="modal-close" onclick="closeLogoutModal()">✕</span>
+            </div>
+            <div class="modal-body">
+                <p>Êtes-vous sûr de vouloir vous déconnecter ?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeLogoutModal()">Non</button>
+                <button class="btn btn-danger" onclick="confirmLogout()">Oui</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '/api/admin';
+        let authToken = localStorage.getItem('adminToken') || sessionStorage.getItem('adminToken');
+        let currentPage = 0;
+        const limit = 20;
+        let totalInscriptions = 0;
+
+        // Auth check
+        async function checkAuth() {
+            if (!authToken) {
+                window.location.href = 'index.html';
+                return false;
+            }
+            try {
+                const res = await fetch(`${API_BASE}/verify`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                if (!res.ok) {
+                    window.location.href = 'index.html';
+                    return false;
+                }
+                return true;
+            } catch (e) {
+                window.location.href = 'index.html';
+                return false;
+            }
+        }
+
+        // Load statuts
+        async function loadStatuts() {
+            try {
+                const res = await fetch(`${API_BASE}/statuts`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    const select = document.getElementById('statutFilter');
+                    data.statuts.forEach(s => {
+                        select.innerHTML += `<option value="${s.code}">${s.libelle}</option>`;
+                    });
+                }
+            } catch (e) { }
+        }
+
+        // Load inscriptions
+        async function loadInscriptions() {
+            const search = document.getElementById('searchInput').value;
+            const statut = document.getElementById('statutFilter').value;
+            const session = document.getElementById('sessionFilter').value;
+
+            const params = new URLSearchParams({
+                limit,
+                offset: currentPage * limit
+            });
+            if (search) params.append('search', search);
+            if (statut) params.append('statut', statut);
+            if (session) params.append('session', session);
+
+            try {
+                const res = await fetch(`${API_BASE}/inscriptions?${params}`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    totalInscriptions = data.total;
+                    renderTable(data.inscriptions);
+                    updatePagination();
+                } else {
+                    document.getElementById('inscriptionsTable').innerHTML =
+                        '<tr><td colspan="7" style="text-align:center;color:var(--danger);">Erreur de chargement</td></tr>';
+                }
+            } catch (e) {
+                document.getElementById('inscriptionsTable').innerHTML =
+                    '<tr><td colspan="7" style="text-align:center;color:var(--danger);">Erreur de connexion</td></tr>';
+            }
+        }
+
+        function renderTable(inscriptions) {
+            const tbody = document.getElementById('inscriptionsTable');
+            document.getElementById('totalCount').textContent = totalInscriptions;
+
+            if (inscriptions.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">Aucune inscription trouvée</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = inscriptions.map(i => `
+                <tr>
+                    <td><code>${i.niu}</code></td>
+                    <td>${i.nom || '-'}</td>
+                    <td>${i.prenom || '-'}</td>
+                    <td>${i.email || '-'}</td>
+                    <td><span class="badge badge-${getStatutClass(i.statut_code)}">${i.statut_libelle || i.statut_code || '-'}</span></td>
+                    <td>${formatDate(i.date_inscription)}</td>
+                    <td>
+                        <a href="fiche.html?niu=${i.niu}" class="btn btn-primary btn-sm">Voir</a>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function getStatutClass(code) {
+            const map = {
+                'RECU': 'recu', 'A_TRAITER': 'a-traiter', 'INCOMPLET': 'incomplet',
+                'EN_ATTENTE': 'en-attente', 'VALIDE': 'valide', 'EN_COURS': 'en-cours',
+                'REFUSE': 'refuse', 'RENVOYE': 'renvoye', 'ABANDONNE': 'abandonne',
+                'TERMINE': 'termine', 'ARCHIVE': 'archive'
+            };
+            return map[code] || 'en-attente';
+        }
+
+        function formatDate(d) {
+            if (!d) return '-';
+            return new Date(d).toLocaleDateString('fr-FR');
+        }
+
+        function updatePagination() {
+            const start = currentPage * limit + 1;
+            const end = Math.min((currentPage + 1) * limit, totalInscriptions);
+            document.getElementById('paginationInfo').textContent =
+                totalInscriptions > 0 ? `${start} - ${end} sur ${totalInscriptions}` : 'Aucun résultat';
+
+            document.getElementById('prevBtn').disabled = currentPage === 0;
+            document.getElementById('nextBtn').disabled = end >= totalInscriptions;
+        }
+
+        function prevPage() {
+            if (currentPage > 0) {
+                currentPage--;
+                loadInscriptions();
+            }
+        }
+
+        function nextPage() {
+            if ((currentPage + 1) * limit < totalInscriptions) {
+                currentPage++;
+                loadInscriptions();
+            }
+        }
+
+        // Logout
+        function logout() {
+            document.getElementById('logoutModal').classList.add('active');
+        }
+        function closeLogoutModal() {
+            document.getElementById('logoutModal').classList.remove('active');
+        }
+        async function confirmLogout() {
+            localStorage.removeItem('adminToken');
+            sessionStorage.removeItem('adminToken');
+            window.location.href = 'index.html';
+        }
+
+        // Init
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (await checkAuth()) {
+                await loadStatuts();
+                await loadInscriptions();
+            }
+        });
+
+        // Search on enter
+        document.getElementById('searchInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') loadInscriptions();
+        });
+    </script>
+</body>
+
+</html>
