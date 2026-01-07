@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion | Kadima Admin</title>
+    <meta name="description" content="Connexion au tableau de bord administrateur Kadima">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/admin.css">
+    <style>
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: var(--gray-400);
+            transition: color var(--transition-fast);
+        }
+
+        .password-toggle:hover {
+            color: var(--gray-600);
+        }
+
+        .password-wrapper {
+            position: relative;
+        }
+
+        .password-wrapper input {
+            padding-right: 44px;
+        }
+
+        .login-error {
+            display: none;
+            margin-bottom: var(--spacing-4);
+        }
+
+        .login-error.show {
+            display: block;
+        }
+
+        .remember-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-6);
+        }
+
+        .remember-label {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-2);
+            cursor: pointer;
+            font-size: var(--font-size-sm);
+            color: var(--gray-600);
+        }
+
+        .checkbox-custom {
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--gray-300);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-fast);
+        }
+
+        .remember-label input:checked+.checkbox-custom {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .remember-label input {
+            display: none;
+        }
+
+        .forgot-link {
+            font-size: var(--font-size-sm);
+            color: var(--accent);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: var(--spacing-4);
+            font-size: var(--font-size-base);
+            font-weight: 600;
+        }
+
+        .loading .btn-text {
+            display: none;
+        }
+
+        .loading .btn-spinner {
+            display: inline-block;
+        }
+
+        .btn-spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body class="login-page">
+    <div class="login-card">
+        <div class="login-header">
+            <img src="../images/logo-kadima.png" alt="Kadima" class="login-logo">
+            <h1 class="login-title">Kadima Admin</h1>
+            <p class="login-subtitle">Gestion des inscriptions</p>
+        </div>
+
+        <div class="login-body">
+            <div class="alert alert-error login-error" id="loginError">
+                <span>⚠️</span>
+                <span id="errorMessage">Identifiants incorrects</span>
+            </div>
+
+            <form id="loginForm" autocomplete="on">
+                <div class="form-group">
+                    <label class="form-label" for="email">Adresse email</label>
+                    <input type="email" id="email" name="email" class="form-control" placeholder="votre@email.com"
+                        autocomplete="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="password">Mot de passe</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="password" name="password" class="form-control"
+                            placeholder="••••••••••••" autocomplete="current-password" required>
+                        <span class="password-toggle" onclick="togglePassword()">
+                            <svg id="eyeIcon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="remember-row">
+                    <label class="remember-label">
+                        <input type="checkbox" id="remember" name="remember">
+                        <span class="checkbox-custom">✓</span>
+                        Se souvenir de moi
+                    </label>
+                    <a href="forgot-password.html" class="forgot-link">Mot de passe oublié ?</a>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-login" id="loginBtn">
+                    <span class="btn-text">Se connecter</span>
+                    <span class="btn-spinner"></span>
+                </button>
+            </form>
+        </div>
+
+        <div class="login-footer">
+            <p class="text-muted text-sm">
+                Programme Kadima - Yéshiva Yéchouot Yossef
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Toggle password visibility
+        function togglePassword() {
+            const input = document.getElementById('password');
+            const icon = document.getElementById('eyeIcon');
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.innerHTML = `
+                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                    <line x1="1" y1="1" x2="23" y2="23"></line>
+                `;
+            } else {
+                input.type = 'password';
+                icon.innerHTML = `
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                `;
+            }
+        }
+
+        // Form submission
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const btn = document.getElementById('loginBtn');
+            const errorDiv = document.getElementById('loginError');
+            const errorMsg = document.getElementById('errorMessage');
+
+            // Loading state
+            btn.classList.add('loading');
+            btn.disabled = true;
+            errorDiv.classList.remove('show');
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const remember = document.getElementById('remember').checked;
+
+            try {
+                const response = await fetch('/api/admin/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password, remember })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    // Stocker le token
+                    if (remember) {
+                        localStorage.setItem('adminToken', data.token);
+                    } else {
+                        sessionStorage.setItem('adminToken', data.token);
+                    }
+
+                    // Rediriger vers le dashboard
+                    window.location.href = 'dashboard.html';
+                } else {
+                    errorMsg.textContent = data.message || 'Identifiants incorrects';
+                    errorDiv.classList.add('show');
+                }
+            } catch (error) {
+                errorMsg.textContent = 'Erreur de connexion au serveur';
+                errorDiv.classList.add('show');
+            } finally {
+                btn.classList.remove('loading');
+                btn.disabled = false;
+            }
+        });
+
+        // Check if already logged in
+        window.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('adminToken') || sessionStorage.getItem('adminToken');
+            if (token) {
+                // Verify token
+                fetch('/api/admin/verify', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                }).then(res => {
+                    if (res.ok) {
+                        window.location.href = 'dashboard.html';
+                    } else {
+                        localStorage.removeItem('adminToken');
+                        sessionStorage.removeItem('adminToken');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Kadima Admin</title>
+    <meta name="description" content="Tableau de bord administrateur Kadima - Gestion des inscriptions">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+
+<body>
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <img src="../images/logo-kadima.png" alt="Kadima" class="sidebar-logo">
+                <div>
+                    <div class="sidebar-title">Kadima</div>
+                    <div class="sidebar-subtitle">Session 2026-2027</div>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Principal</div>
+                    <a href="dashboard.html" class="nav-item active">
+                        <span class="nav-item-icon">📊</span>
+                        <span class="nav-item-text">Tableau de bord</span>
+                    </a>
+                    <a href="inscriptions.html" class="nav-item">
+                        <span class="nav-item-icon">📋</span>
+                        <span class="nav-item-text">Inscriptions</span>
+                        <span class="nav-item-badge" id="newCount">0</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Gestion</div>
+                    <a href="bourses.html" class="nav-item">
+                        <span class="nav-item-icon">🎓</span>
+                        <span class="nav-item-text">Bourses</span>
+                    </a>
+                    <a href="paiements.html" class="nav-item">
+                        <span class="nav-item-icon">💳</span>
+                        <span class="nav-item-text">Paiements</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Administration</div>
+                    <a href="utilisateurs.html" class="nav-item">
+                        <span class="nav-item-icon">👥</span>
+                        <span class="nav-item-text">Utilisateurs</span>
+                    </a>
+                </div>
+            </nav>
+
+            <div style="padding: var(--spacing-4); border-top: 1px solid rgba(255,255,255,0.1);">
+                <a href="#" class="nav-item" onclick="logout()">
+                    <span class="nav-item-icon">🚪</span>
+                    <span class="nav-item-text">Déconnexion</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main content -->
+        <main class="admin-main">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <button class="header-btn" onclick="toggleSidebar()" style="display: none;" id="menuBtn">
+                        ☰
+                    </button>
+                    <h1 class="header-title">Tableau de bord</h1>
+                </div>
+
+                <div class="header-right">
+                    <div class="header-search">
+                        <span class="header-search-icon">🔍</span>
+                        <input type="text" placeholder="Rechercher..." id="globalSearch">
+                    </div>
+
+                    <div class="header-actions">
+                        <div class="header-btn" title="Notifications">
+                            🔔
+                            <span class="badge" id="notifBadge" style="display: none;">0</span>
+                        </div>
+                    </div>
+
+                    <div class="user-menu" onclick="toggleUserMenu()">
+                        <div class="user-avatar" id="userAvatar">SG</div>
+                        <div class="user-info">
+                            <div class="user-name" id="userName">Sassi Gestion</div>
+                            <div class="user-role" id="userRole">Administrateur</div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content -->
+            <div class="admin-content">
+                <!-- Stats -->
+                <div class="stats-grid" id="statsGrid">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: var(--status-recu); color: var(--primary);">📥</div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="statTotal">-</div>
+                            <div class="stat-label">Total inscriptions</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: var(--status-a-traiter); color: white;">📋</div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="statATraiter">-</div>
+                            <div class="stat-label">À traiter</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: var(--status-valide); color: var(--primary);">✓</div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="statValide">-</div>
+                            <div class="stat-label">Validées</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: var(--status-en-cours); color: white;">🎓</div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="statEnCours">-</div>
+                            <div class="stat-label">En cours</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent inscriptions -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Inscriptions récentes</h2>
+                        <div class="flex gap-2">
+                            <select class="form-control" id="filterStatut" style="width: 180px;">
+                                <option value="">Tous les statuts</option>
+                                <option value="RECU">Reçu</option>
+                                <option value="A_TRAITER">À traiter</option>
+                                <option value="INCOMPLET">Dossier incomplet</option>
+                                <option value="EN_ATTENTE">En attente</option>
+                                <option value="VALIDE">Validée</option>
+                                <option value="EN_COURS">En cours</option>
+                                <option value="REFUSE">Refusée</option>
+                                <option value="RENVOYE">Renvoyé</option>
+                                <option value="ABANDONNE">Abandonné</option>
+                                <option value="TERMINE">Terminé</option>
+                                <option value="ARCHIVE">Archivé</option>
+                            </select>
+                            <a href="inscriptions.html" class="btn btn-outline">Voir tout</a>
+                        </div>
+                    </div>
+                    <div class="card-body" style="padding: 0;">
+                        <div class="table-container">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>NIU</th>
+                                        <th>Nom</th>
+                                        <th>Prénom</th>
+                                        <th>Email</th>
+                                        <th>Statut</th>
+                                        <th>Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="inscriptionsTable">
+                                    <tr>
+                                        <td colspan="7" class="text-center text-muted" style="padding: 40px;">
+                                            Chargement...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal déconnexion -->
+    <div class="modal-overlay" id="logoutModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Confirmer la déconnexion</h3>
+                <span class="modal-close" onclick="closeLogoutModal()">✕</span>
+            </div>
+            <div class="modal-body">
+                <p>Êtes-vous sûr de vouloir vous déconnecter ?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeLogoutModal()">Non, annuler</button>
+                <button class="btn btn-danger" onclick="confirmLogout()">Oui, me déconnecter</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const API_BASE = '/api/admin';
+        let authToken = localStorage.getItem('adminToken') || sessionStorage.getItem('adminToken');
+
+        // Vérification authentification
+        async function checkAuth() {
+            if (!authToken) {
+                window.location.href = 'index.html';
+                return false;
+            }
+
+            try {
+                const res = await fetch(`${API_BASE}/verify`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+
+                if (!res.ok) {
+                    localStorage.removeItem('adminToken');
+                    sessionStorage.removeItem('adminToken');
+                    window.location.href = 'index.html';
+                    return false;
+                }
+
+                const data = await res.json();
+                if (data.user) {
+                    document.getElementById('userName').textContent = data.user.nom || 'Admin';
+                    document.getElementById('userAvatar').textContent = getInitials(data.user.nom, data.user.prenom);
+                }
+                return true;
+            } catch (error) {
+                console.error('Auth error:', error);
+                window.location.href = 'index.html';
+                return false;
+            }
+        }
+
+        function getInitials(nom, prenom) {
+            const n = (nom || '').charAt(0).toUpperCase();
+            const p = (prenom || '').charAt(0).toUpperCase();
+            return n + p || 'AD';
+        }
+
+        // Chargement des statistiques
+        async function loadStats() {
+            try {
+                const res = await fetch(`${API_BASE}/stats`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+
+                if (res.ok) {
+                    const stats = await res.json();
+                    document.getElementById('statTotal').textContent = stats.total || 0;
+                    document.getElementById('statATraiter').textContent = stats.a_traiter || 0;
+                    document.getElementById('statValide').textContent = stats.valide || 0;
+                    document.getElementById('statEnCours').textContent = stats.en_cours || 0;
+                    document.getElementById('newCount').textContent = stats.recu || 0;
+                }
+            } catch (error) {
+                console.error('Stats error:', error);
+            }
+        }
+
+        // Chargement des inscriptions
+        async function loadInscriptions(statut = '') {
+            const tbody = document.getElementById('inscriptionsTable');
+            tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted" style="padding: 40px;">Chargement...</td></tr>';
+
+            try {
+                let url = `${API_BASE}/inscriptions?limit=10`;
+                if (statut) url += `&statut=${statut}`;
+
+                const res = await fetch(url, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    renderInscriptions(data.inscriptions || []);
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted" style="padding: 40px;">Erreur de chargement</td></tr>';
+                }
+            } catch (error) {
+                console.error('Load error:', error);
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted" style="padding: 40px;">Erreur de connexion</td></tr>';
+            }
+        }
+
+        function renderInscriptions(inscriptions) {
+            const tbody = document.getElementById('inscriptionsTable');
+
+            if (inscriptions.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted" style="padding: 40px;">Aucune inscription</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = inscriptions.map(ins => `
+                <tr>
+                    <td><a href="fiche.html?niu=${ins.niu}" class="table-link">${ins.niu}</a></td>
+                    <td>${escapeHtml(ins.nom)}</td>
+                    <td>${escapeHtml(ins.prenom)}</td>
+                    <td>${escapeHtml(ins.email)}</td>
+                    <td><span class="badge badge-${getStatutClass(ins.statut_code)}">${ins.statut_libelle || ins.statut_code}</span></td>
+                    <td>${formatDate(ins.date_inscription)}</td>
+                    <td>
+                        <a href="fiche.html?niu=${ins.niu}" class="btn btn-sm btn-outline">Voir</a>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function getStatutClass(code) {
+            const map = {
+                'RECU': 'recu',
+                'A_TRAITER': 'a-traiter',
+                'INCOMPLET': 'incomplet',
+                'EN_ATTENTE': 'en-attente',
+                'VALIDE': 'valide',
+                'EN_COURS': 'en-cours',
+                'REFUSE': 'refuse',
+                'RENVOYE': 'renvoye',
+                'ABANDONNE': 'abandonne',
+                'TERMINE': 'termine',
+                'ARCHIVE': 'archive'
+            };
+            return map[code] || 'en-attente';
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '-';
+            const d = new Date(dateStr);
+            return d.toLocaleDateString('fr-FR');
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        // Sidebar toggle (mobile)
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        // Logout
+        function logout() {
+            document.getElementById('logoutModal').classList.add('active');
+        }
+
+        function closeLogoutModal() {
+            document.getElementById('logoutModal').classList.remove('active');
+        }
+
+        async function confirmLogout() {
+            try {
+                await fetch(`${API_BASE}/logout`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+            } catch (e) { }
+
+            localStorage.removeItem('adminToken');
+            sessionStorage.removeItem('adminToken');
+            window.location.href = 'index.html';
+        }
+
+        // Filter
+        document.getElementById('filterStatut').addEventListener('change', (e) => {
+            loadInscriptions(e.target.value);
+        });
+
+        // Global search
+        let searchTimeout;
+        document.getElementById('globalSearch').addEventListener('input', (e) => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                // Implement search
+                console.log('Search:', e.target.value);
+            }, 300);
+        });
+
+        // Init
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (await checkAuth()) {
+                loadStats();
+                loadInscriptions();
+            }
+        });
+    </script>
+</body>
+
+</html>
